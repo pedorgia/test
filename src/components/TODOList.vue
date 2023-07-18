@@ -1,28 +1,17 @@
 <script setup>
-import { reactive } from 'vue'
-import { addModal } from '../components/addModal.vue'
+import { defineProps } from 'vue'
 
-const TODOArray = reactive([])
-
-const newTODOInfo = reactive({})
-
-const openAddModal = () => {
-  addModal
-}
-
-const addNewTODO = () => {
-  openAddModal()
-}
+const props = defineProps({ TODOArray: Array })
+// const emit = defineEmits([])
 </script>
 
 <template>
   Hello from TODOList
   <ul>
-    <li v-for="item in TODOArray" :key="item.value">
+    <li v-for="item in props.TODOArray" :key="item.value">
       {{ item }}
     </li>
   </ul>
-  <button @click="addNewTODO">Add new TODO</button>
 </template>
 
 <style scoped></style>
