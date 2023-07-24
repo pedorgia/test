@@ -1,11 +1,18 @@
 <script setup>
 import { ref } from 'vue'
 const TODOvalue = ref('')
+const TODOTaskValue = ref('')
+const TODOtasks = ref([])
 
-const emit = defineEmits(['addNewTODO'])
+const emit = defineEmits(['addNewTODO', 'addTask'])
 
 const addNewTODO = () => {
-  emit('addNewTODO', TODOvalue.value)
+  emit('addNewTODO', TODOvalue.value, TODOtasks.value)
+}
+const addTask = () => {
+  TODOtasks.value.push(TODOTaskValue.value)
+  console.log(TODOtasks)
+  TODOTaskValue.value = ''
 }
 </script>
 
@@ -13,9 +20,21 @@ const addNewTODO = () => {
   <Teleport to="#app">
     <div class="modal-wrapper">
       <div class="modal">
-        Enter your information:
-        <input v-model="TODOvalue" @keydown.enter="addNewTODO" />
-        <button @click="addNewTODO">Create</button>
+        <div>
+          Enter title:
+          <input v-model="TODOvalue" @keydown.enter="addNewTODO" />
+        </div>
+        <div>
+          Enter tasks:
+          <input v-model="TODOTaskValue" @keydown.enter="addNewTODO" />
+          <button @click="addTask" :disabled="!TODOTaskValue">Add task</button>
+          <ul>
+            <li v-for="task in TODOtasks" :key="task.value">
+              {{ task }}
+            </li>
+          </ul>
+        </div>
+        <button @click="addNewTODO" :disabled="!TODOvalue">Create</button>
       </div>
     </div>
   </Teleport>
@@ -34,6 +53,7 @@ const addNewTODO = () => {
   position: absolute;
   top: 50%;
   left: 50%;
+  display: block;
 
   transform: translateX(-50%);
   transform: translateY(-50%) translateX(-50%);

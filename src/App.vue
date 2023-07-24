@@ -6,14 +6,52 @@ const TODOListValue = ref([])
 
 const isShowModal = ref(false)
 
-const addNewTODO = (payload) => {
+const addNewTODO = (title, tasks) => {
   isShowModal.value = false
-  TODOListValue.value.push(payload)
+  console.log(title, tasks)
+  TODOListValue.value.push({ title, tasks })
 }
 </script>
 
 <template>
-  <TODOList :TODOArray="TODOListValue" />
-  <AddModal v-if="isShowModal" @addNewTODO="addNewTODO" />
-  <button @click="isShowModal = !isShowModal">Add Item</button>
+  <header>
+    <div class="main-button">
+      <button @click="isShowModal = !isShowModal" class="add-item-button">Add Item</button>
+    </div>
+  </header>
+  <div class="todo-array">
+    <TODOList :TODOArray="TODOListValue" />
+  </div>
+  <div>
+    <AddModal v-if="isShowModal" @addNewTODO="addNewTODO" />
+  </div>
 </template>
+
+<style scoped>
+.todo-array {
+  margin: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  /* justify-content: center;
+  align-items: center; */
+}
+.main-button {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
+  .add-item-button {
+    height: 90%;
+    width: 60%;
+    font-size: 30px;
+    border: dashed;
+    background-color: fuchsia;
+    color: yellow;
+    cursor: pointer;
+  }
+  .add-item-button:hover {
+    background-color: palevioletred;
+  }
+}
+</style>
