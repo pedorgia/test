@@ -28,11 +28,12 @@ const addTask = () => {
           Enter tasks:
           <input v-model="TODOTaskValue" @keydown.enter="addNewTODO" />
           <button @click="addTask" :disabled="!TODOTaskValue">Add task</button>
-          <ul>
-            <li v-for="task in TODOtasks" :key="task.value">
+          <div v-if="TODOtasks.length > 0">
+            <span>Tasks: </span>
+            <div v-for="task in TODOtasks" :key="task.value">
               {{ task }}
-            </li>
-          </ul>
+            </div>
+          </div>
         </div>
         <button @click="addNewTODO" :disabled="!TODOvalue">Create</button>
       </div>

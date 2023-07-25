@@ -10,7 +10,7 @@ const props = defineProps({ TODOArray: Array })
     <div v-for="(item, index) in props.TODOArray" :key="item.value" class="todo">
       <div class="title">{{ index + 1 }}. {{ item.title }}</div>
       <div v-for="task in item.tasks" :key="task.value" class="tasks">
-        <input type="checkbox" id="checkbox" />
+        <input type="checkbox" id="checkbox" :disabled="true" />
         {{ task }}
       </div>
       <div v-if="item.tasks.length > 3">...</div>
