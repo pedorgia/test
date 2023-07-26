@@ -11,7 +11,6 @@ const addNewTODO = () => {
 }
 const addTask = () => {
   TODOtasks.value.push(TODOTaskValue.value)
-  console.log(TODOtasks)
   TODOTaskValue.value = ''
 }
 </script>

@@ -3,6 +3,11 @@ import { defineProps } from 'vue'
 
 const props = defineProps({ TODOArray: Array })
 // const emit = defineEmits([])
+const emit = defineEmits(['openDeleteModal'])
+
+const openDeleteModal = (index) => {
+  emit('openDeleteModal', index)
+}
 </script>
 
 <template>
@@ -13,7 +18,13 @@ const props = defineProps({ TODOArray: Array })
         <input type="checkbox" id="checkbox" :disabled="true" />
         {{ task }}
       </div>
-      <div v-if="item.tasks.length > 3">...</div>
+      <div v-show="item.tasks.length > 3" style="margin-bottom: 20px">...</div>
+      <div class="button-footer">
+        <div class="todo-buttons">
+          <button class="edit">Edit me</button>
+          <button class="delete" @click="openDeleteModal(index)">Delete me</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -38,8 +49,9 @@ const props = defineProps({ TODOArray: Array })
   margin-right: 30px;
   background-color: aqua;
   margin-bottom: 10px;
-  cursor: pointer;
+  /* cursor: pointer; */
   overflow: hidden;
+  position: relative;
 
   .title {
     padding-top: 10px;
@@ -54,6 +66,29 @@ const props = defineProps({ TODOArray: Array })
   }
   .tasks:nth-child(-n + 4) {
     display: block;
+  }
+  .todo-buttons {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+  }
+  .delete {
+    background-color: coral;
+    color: white;
+    width: 40%;
+    cursor: pointer;
+  }
+  .edit {
+    background-color: coral;
+    color: white;
+    width: 40%;
+    cursor: pointer;
+  }
+  .button-footer {
+    position: absolute;
+    bottom: 20px;
+    left: 5px;
   }
 }
 </style>
