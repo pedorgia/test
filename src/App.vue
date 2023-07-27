@@ -1,25 +1,37 @@
 <script setup>
+// import Vue from 'vue'
+// import VueRouter from 'vue-router'
+
+// Vue.use(VueRouter)
 import DeleteModal from './components/DeleteModal.vue'
 import TODOList from './components/TODOList.vue'
 import AddModal from './components/addModal.vue'
 import { ref } from 'vue'
+import EditModal from './components/EditModal.vue';
 const TODOListValue = ref([])
 
 const isAddModal = ref(false)
 const isDeleteModal = ref(false)
+const isEditModalPage = ref(false)
 const deleteIndex = ref(-1)
+const editIndex = ref(-1)
 
 const addNewTODO = (title, tasks) => {
   isAddModal.value = false
   TODOListValue.value.push({ title, tasks })
 }
-const openDeleteModal = (todoForDelete) => {
+const openDeleteModal = (x) => {
   isDeleteModal.value = true
-  deleteIndex.value = todoForDelete
+  deleteIndex.value = x
 }
 
 const exitDeleteModal = () => {
   isDeleteModal.value = false
+}
+
+const openEditModalPage = (x) => {
+  isEditModalPage.value = true
+  editIndex.value = x
 }
 
 const deleteTODO = (deleteIndex) => {
@@ -35,7 +47,9 @@ const deleteTODO = (deleteIndex) => {
     </div>
   </header>
   <div class="todo-array">
-    <TODOList :TODOArray="TODOListValue" @openDeleteModal="openDeleteModal" />
+    <TODOList :TODOArray="TODOListValue" 
+    @openDeleteModal="openDeleteModal" 
+    @openEditModalPage="openEditModalPage" />
   </div>
   <div>
     <AddModal v-if="isAddModal" @addNewTODO="addNewTODO" />
@@ -47,6 +61,11 @@ const deleteTODO = (deleteIndex) => {
       @exitDeleteModal="exitDeleteModal"
       @deleteTODO="deleteTODO"
     />
+  </div>
+  <div>
+    <EditModal v-if="isEditModalPage" 
+    :editIndex="editIndex"
+    :TODOArray="TODOListValue" />
   </div>
 </template>
 

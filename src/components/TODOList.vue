@@ -3,7 +3,11 @@ import { defineProps } from 'vue'
 
 const props = defineProps({ TODOArray: Array })
 // const emit = defineEmits([])
-const emit = defineEmits(['openDeleteModal'])
+const emit = defineEmits(['openDeleteModal, openEditModalPage'])
+
+const openEditModalPage = (index) => {
+  emit('openEditModalPage', index)
+}
 
 const openDeleteModal = (index) => {
   emit('openDeleteModal', index)
@@ -21,7 +25,7 @@ const openDeleteModal = (index) => {
       <div v-show="item.tasks.length > 3" style="margin-bottom: 20px">...</div>
       <div class="button-footer">
         <div class="todo-buttons">
-          <button class="edit">Edit me</button>
+          <button class="edit" @click ="openEditModalPage(index)">Edit me</button>
           <button class="delete" @click="openDeleteModal(index)">Delete me</button>
         </div>
       </div>
