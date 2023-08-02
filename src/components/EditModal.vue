@@ -1,15 +1,22 @@
 <script setup>
-const props = defineProps({ editIndex: Number, TODOArray: Array })
+const props = defineProps({
+  editIndex: Number,
+  TODOArray: Array
+})
 
-// const emit = defineEmits(['exitDeleteModal', 'deleteTODO'])
+const emit = defineEmits(['openDeleteTODOFromEdit, deleteTaskFromTODO'])
 
 // const exitDeleteModal = () => {
 //   emit('exitDeleteModal')
 // }
 
-// const deleteTODO = () => {
-//   emit('deleteTODO', props.editIndex)
-// }
+const deleteTaskFromTODO = (taskIndex) => {
+  emit('deleteTaskFromTODO', props.editIndex, taskIndex)
+}
+
+const openDeleteTODOFromEdit = () => {
+  emit('openDeleteTODOFromEdit', props.editIndex)
+}
 </script>
 
 <template>
@@ -17,10 +24,28 @@ const props = defineProps({ editIndex: Number, TODOArray: Array })
     <div class="modal-wrapper">
       <div class="modal">
         <div class="title">{{ props.editIndex + 1 }}. {{ props.TODOArray[editIndex].title }}</div>
-         <div v-for="task in props.TODOArray[editIndex].tasks" :key="task.value" class="tasks">
-          <input type="checkbox" id="checkbox"/>
-            {{ task }}
+        <div
+          v-for="(task, taskIndex) in props.TODOArray[editIndex].tasks"
+          :key="task.value"
+          class="tasks"
+        >
+          <div class="task-field">
+            <div>
+              <input type="checkbox" id="checkbox" />
+              {{ task }}
+            </div>
+            <div>
+              <button>Edit</button>
+              <button @click="deleteTaskFromTODO(taskIndex)">Delete</button>
+            </div>
           </div>
+        </div>
+        <div>
+          <button>Save</button>
+          <button>Undo</button>
+          <button @click="openDeleteTODOFromEdit">Delete</button>
+          <button>Cancel</button>
+        </div>
       </div>
     </div>
   </Teleport>
@@ -46,5 +71,10 @@ const props = defineProps({ editIndex: Number, TODOArray: Array })
   background-color: white;
   border-radius: 3px;
   padding: 1rem;
+}
+.task-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 </style>
