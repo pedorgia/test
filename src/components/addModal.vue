@@ -10,7 +10,10 @@ const addNewTODO = () => {
   emit('addNewTODO', TODOvalue.value, TODOtasks.value)
 }
 const addTask = () => {
-  TODOtasks.value.push(TODOTaskValue.value)
+  TODOtasks.value.push({
+    text: TODOTaskValue.value,
+    doneStatus: false
+  })
   TODOTaskValue.value = ''
 }
 </script>
@@ -30,7 +33,7 @@ const addTask = () => {
           <div v-if="TODOtasks.length > 0">
             <span>Tasks: </span>
             <div v-for="task in TODOtasks" :key="task.value">
-              {{ task }}
+              {{ task.text }}
             </div>
           </div>
         </div>

@@ -19,13 +19,13 @@ const openDeleteModal = (index) => {
     <div v-for="(item, index) in props.TODOArray" :key="item.value" class="todo">
       <div class="title">{{ index + 1 }}. {{ item.title }}</div>
       <div v-for="task in item.tasks" :key="task.value" class="tasks">
-        <input type="checkbox" id="checkbox" :disabled="true" />
-        {{ task }}
+        <input type="checkbox" id="checkbox" :disabled="true" v-model="task.doneStatus" />
+        {{ task.text }}
       </div>
       <div v-show="item.tasks.length > 3" style="margin-bottom: 20px">...</div>
       <div class="button-footer">
         <div class="todo-buttons">
-          <button class="edit" @click ="openEditModalPage(index)">Edit me</button>
+          <button class="edit" @click="openEditModalPage(index)">Edit me</button>
           <button class="delete" @click="openDeleteModal(index)">Delete me</button>
         </div>
       </div>

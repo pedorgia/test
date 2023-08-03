@@ -3,11 +3,33 @@ const props = defineProps({
   editIndex: Number,
   TODOArray: Array
 })
+import { ref } from 'vue'
 
-const emit = defineEmits(['openDeleteTODOFromEdit, deleteTaskFromTODO'])
+const emit = defineEmits([
+  'openDeleteTODOFromEdit, deleteTaskFromTODO',
+  'saveEditedTask',
+  'cancelAndExit',
+  'saveAndExit',
+  'cancel'
+])
+
+const isEditMode = ref(false)
+const changedTaskText = ref('')
+const editedCurrentTask = ref(-1)
+//const initialTODO = ref({ ...props.TODOArray[props.editIndex] })
+const initialTODO = ref(JSON.parse(JSON.stringify(props.TODOArray[props.editIndex])))
 
 // const exitDeleteModal = () => {
 //   emit('exitDeleteModal')
+// }
+const editTaskFromTODO = (taskIndex) => {
+  isEditMode.value = true
+  editedCurrentTask.value = taskIndex
+  changedTaskText.value = props.TODOArray[props.editIndex].tasks[taskIndex].text
+}
+
+// const editTaskFromTODO = (taskIndex) => {
+//   emit('editTaskFromTODO', props.editIndex, taskIndex)
 // }
 
 const deleteTaskFromTODO = (taskIndex) => {
@@ -17,6 +39,29 @@ const deleteTaskFromTODO = (taskIndex) => {
 const openDeleteTODOFromEdit = () => {
   emit('openDeleteTODOFromEdit', props.editIndex)
 }
+
+const saveEditedTask = () => {
+  emit('saveEditedTask', props.editIndex, editedCurrentTask.value, changedTaskText.value)
+  editedCurrentTask.value = -1
+  changedTaskText.value = ''
+  isEditMode.value = false
+}
+
+const cancelChangesForTask = () => {
+  editedCurrentTask.value = -1
+  changedTaskText.value = ''
+  isEditMode.value = false
+}
+
+const cancelAndExit = () => {
+  emit('cancelAndExit', initialTODO.value)
+}
+
+const saveAndExit = () => {
+  emit('saveAndExit')
+}
+
+const cancel = () => {}
 </script>
 
 <template>
@@ -30,21 +75,31 @@ const openDeleteTODOFromEdit = () => {
           class="tasks"
         >
           <div class="task-field">
-            <div>
-              <input type="checkbox" id="checkbox" />
-              {{ task }}
+            <div v-if="taskIndex != editedCurrentTask">
+              <input
+                type="checkbox"
+                id="checkbox"
+                @click="task.doneStatus = !task.doneStatus"
+                v-model="task.doneStatus"
+              />
+              {{ task.text }} {{ task.doneStatus }}
             </div>
-            <div>
-              <button>Edit</button>
+            <div v-if="isEditMode && taskIndex == editedCurrentTask" class="editMode">
+              <input v-model="changedTaskText" />
+              <button @click="saveEditedTask">Save</button>
+              <button @click="cancelChangesForTask">Cancel</button>
+            </div>
+            <div v-if="taskIndex != editedCurrentTask">
+              <button @click="editTaskFromTODO(taskIndex)">Edit</button>
               <button @click="deleteTaskFromTODO(taskIndex)">Delete</button>
             </div>
           </div>
         </div>
         <div>
-          <button>Save</button>
-          <button>Undo</button>
+          <button @click="saveAndExit">Save</button>
+          <button @click="cancel">Undo</button>
           <button @click="openDeleteTODOFromEdit">Delete</button>
-          <button>Cancel</button>
+          <button @click="cancelAndExit">Cancel</button>
         </div>
       </div>
     </div>
@@ -75,6 +130,11 @@ const openDeleteTODOFromEdit = () => {
 .task-field {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+}
+
+.editMode {
+  display: flex;
   justify-content: space-between;
 }
 </style>

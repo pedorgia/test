@@ -52,6 +52,23 @@ const deleteTaskFromTODO = (TODOindex, taskIndex) => {
     (_, ind) => ind != taskIndex
   )
 }
+
+const saveEditedTask = (TODOindex, taskIndex, newText) => {
+  TODOListValue.value[TODOindex].tasks[taskIndex].text = newText
+  // isEditModalPage.value = false
+  // editIndex.value = -1
+}
+
+const cancelAndExit = (initialTODO) => {
+  TODOListValue.value[editIndex] = { ...initialTODO }
+  isEditModalPage.value = false
+  editIndex.value = -1
+}
+
+const saveAndExit = () => {
+  isEditModalPage.value = false
+  editIndex.value = -1
+}
 </script>
 
 <template>
@@ -85,6 +102,9 @@ const deleteTaskFromTODO = (TODOindex, taskIndex) => {
       :TODOArray="TODOListValue"
       @openDeleteTODOFromEdit="openDeleteTODOFromEdit"
       @deleteTaskFromTODO="deleteTaskFromTODO"
+      @saveEditedTask="saveEditedTask"
+      @cancelAndExit="cancelAndExit"
+      @saveAndExit="saveAndExit"
     />
   </div>
 </template>
