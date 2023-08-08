@@ -6,11 +6,10 @@ const props = defineProps({
 import { ref } from 'vue'
 
 const emit = defineEmits([
-  'openDeleteTODOFromEdit, deleteTaskFromTODO',
-  'saveEditedTask',
+  'openDeleteTODOFromEdit',
+  'deleteTaskFromTODO',
   'cancelAndExit',
-  'saveAndExit',
-  'cancel'
+  'saveAndExit'
 ])
 
 const isEditMode = ref(false)
@@ -18,6 +17,7 @@ const changedTaskText = ref('')
 const editedCurrentTask = ref(-1)
 //const initialTODO = ref({ ...props.TODOArray[props.editIndex] })
 const initialTODO = ref(JSON.parse(JSON.stringify(props.TODOArray[props.editIndex])))
+const preparedChanges = ref([])
 
 // const exitDeleteModal = () => {
 //   emit('exitDeleteModal')
@@ -25,7 +25,7 @@ const initialTODO = ref(JSON.parse(JSON.stringify(props.TODOArray[props.editInde
 const editTaskFromTODO = (taskIndex) => {
   isEditMode.value = true
   editedCurrentTask.value = taskIndex
-  changedTaskText.value = props.TODOArray[props.editIndex].tasks[taskIndex].text
+  changedTaskText.value = initialTODO.value.tasks[taskIndex].text
 }
 
 // const editTaskFromTODO = (taskIndex) => {
@@ -41,7 +41,13 @@ const openDeleteTODOFromEdit = () => {
 }
 
 const saveEditedTask = () => {
-  emit('saveEditedTask', props.editIndex, editedCurrentTask.value, changedTaskText.value)
+  //emit('saveEditedTask', props.editIndex, editedCurrentTask.value, changedTaskText.value)
+  preparedChanges.value.push({
+    editedTODO: props.editIndex,
+    editedTask: editedCurrentTask.value,
+    newText: changedTaskText.value
+  })
+  initialTODO.value.tasks[editedCurrentTask.value].text = changedTaskText.value
   editedCurrentTask.value = -1
   changedTaskText.value = ''
   isEditMode.value = false
@@ -54,32 +60,39 @@ const cancelChangesForTask = () => {
 }
 
 const cancelAndExit = () => {
-  emit('cancelAndExit', initialTODO.value)
+  emit('cancelAndExit')
 }
 
 const saveAndExit = () => {
-  emit('saveAndExit')
+  emit('saveAndExit', preparedChanges.value)
 }
 
-const cancel = () => {}
+const cancelChanges = () => {
+  initialTODO.value = JSON.parse(JSON.stringify(props.TODOArray[props.editIndex]))
+  preparedChanges.value = []
+}
+
+const changeDoneStatus = (taskIndex) => {
+  preparedChanges.value.push({
+    editedTODO: props.editIndex,
+    editedTask: taskIndex,
+    newDoneStatus: !initialTODO.value.tasks[taskIndex].doneStatus
+  })
+}
 </script>
 
 <template>
   <Teleport to="#app">
     <div class="modal-wrapper">
       <div class="modal">
-        <div class="title">{{ props.editIndex + 1 }}. {{ props.TODOArray[editIndex].title }}</div>
-        <div
-          v-for="(task, taskIndex) in props.TODOArray[editIndex].tasks"
-          :key="task.value"
-          class="tasks"
-        >
+        <div class="title">{{ props.editIndex + 1 }}. {{ initialTODO.title }}</div>
+        <div v-for="(task, taskIndex) in initialTODO.tasks" :key="task.value" class="tasks">
           <div class="task-field">
             <div v-if="taskIndex != editedCurrentTask">
               <input
                 type="checkbox"
                 id="checkbox"
-                @click="task.doneStatus = !task.doneStatus"
+                @click="changeDoneStatus(taskIndex)"
                 v-model="task.doneStatus"
               />
               {{ task.text }} {{ task.doneStatus }}
@@ -97,7 +110,7 @@ const cancel = () => {}
         </div>
         <div>
           <button @click="saveAndExit">Save</button>
-          <button @click="cancel">Undo</button>
+          <button @click="cancelChanges">Undo</button>
           <button @click="openDeleteTODOFromEdit">Delete</button>
           <button @click="cancelAndExit">Cancel</button>
         </div>
@@ -136,5 +149,18 @@ const cancel = () => {}
 .editMode {
   display: flex;
   justify-content: space-between;
+}
+
+button {
+  margin: 5px;
+  border: 2px;
+  color: white;
+  background-color: red;
+
+  cursor: pointer;
+  border-radius: 5px;
+}
+button :hover {
+  box-shadow: 5px 5px 20px rgba(159, 30, 30, 0.5);
 }
 </style>

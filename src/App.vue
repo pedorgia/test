@@ -53,19 +53,28 @@ const deleteTaskFromTODO = (TODOindex, taskIndex) => {
   )
 }
 
-const saveEditedTask = (TODOindex, taskIndex, newText) => {
-  TODOListValue.value[TODOindex].tasks[taskIndex].text = newText
-  // isEditModalPage.value = false
-  // editIndex.value = -1
-}
+// const saveEditedTask = (TODOindex, taskIndex, newText) => {saveAndExit
+//   TODOListValue.value[TODOindex].tasks[taskIndex].text = newText
+//   // isEditModalPage.value = false
+//   // editIndex.value = -1
+// }
 
-const cancelAndExit = (initialTODO) => {
-  TODOListValue.value[editIndex] = { ...initialTODO }
+const cancelAndExit = () => {
+  //TODOListValue.value[editIndex] = { ...initialTODO }
   isEditModalPage.value = false
   editIndex.value = -1
 }
 
-const saveAndExit = () => {
+const saveAndExit = (changesForTODOArray) => {
+  for (let i = 0; i < changesForTODOArray.length; i++) {
+    let x = changesForTODOArray[i]
+    if ('newText' in x) {
+      TODOListValue.value[x.editedTODO].tasks[x.editedTask].text = x.newText
+    }
+    if ('newDoneStatus' in x) {
+      TODOListValue.value[x.editedTODO].tasks[x.editedTask].doneStatus = x.newDoneStatus
+    }
+  }
   isEditModalPage.value = false
   editIndex.value = -1
 }
@@ -102,7 +111,6 @@ const saveAndExit = () => {
       :TODOArray="TODOListValue"
       @openDeleteTODOFromEdit="openDeleteTODOFromEdit"
       @deleteTaskFromTODO="deleteTaskFromTODO"
-      @saveEditedTask="saveEditedTask"
       @cancelAndExit="cancelAndExit"
       @saveAndExit="saveAndExit"
     />
