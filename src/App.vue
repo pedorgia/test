@@ -16,9 +16,13 @@ const isEditModalPage = ref(false)
 const deleteIndex = ref(-1)
 const editIndex = ref(-1)
 
+localStorage.setItem('TODOArray', ref(JSON.parse(JSON.stringify(TODOListValue))))
+
 const addNewTODO = (title, tasks) => {
   isAddModal.value = false
   TODOListValue.value.push({ title, tasks })
+  localStorage.setItem('TODOArray', ref(JSON.parse(JSON.stringify(TODOListValue))))
+  console.log(localStorage.getItem('TODOArray'))
 }
 const openDeleteModal = (x) => {
   isDeleteModal.value = true
@@ -36,6 +40,7 @@ const openEditModalPage = (x) => {
 
 const deleteTODO = (deleteIndex) => {
   TODOListValue.value = TODOListValue.value.filter((_, index) => index != deleteIndex)
+  localStorage.setItem('TODOArray', ref(JSON.parse(JSON.stringify(TODOListValue))))
   exitDeleteModal()
 }
 
@@ -45,13 +50,14 @@ const openDeleteTODOFromEdit = (x) => {
   isEditModalPage.value = false
   isDeleteModal.value = true
   deleteIndex.value = x
+  localStorage.setItem('TODOArray', ref(JSON.parse(JSON.stringify(TODOListValue))))
 }
 
-const deleteTaskFromTODO = (TODOindex, taskIndex) => {
-  TODOListValue.value[TODOindex].tasks = TODOListValue.value[TODOindex].tasks.filter(
-    (_, ind) => ind != taskIndex
-  )
-}
+// const deleteTaskFromTODO = (TODOindex, taskIndex) => {
+//   TODOListValue.value[TODOindex].tasks = TODOListValue.value[TODOindex].tasks.filter(
+//     (_, ind) => ind != taskIndex
+//   )
+// }
 
 // const saveEditedTask = (TODOindex, taskIndex, newText) => {saveAndExit
 //   TODOListValue.value[TODOindex].tasks[taskIndex].text = newText
@@ -63,6 +69,7 @@ const cancelAndExit = () => {
   //TODOListValue.value[editIndex] = { ...initialTODO }
   isEditModalPage.value = false
   editIndex.value = -1
+  localStorage.setItem('TODOArray', ref(JSON.parse(JSON.stringify(TODOListValue))))
 }
 
 const saveAndExit = (changesForTODOArray) => {
@@ -74,9 +81,21 @@ const saveAndExit = (changesForTODOArray) => {
     if ('newDoneStatus' in x) {
       TODOListValue.value[x.editedTODO].tasks[x.editedTask].doneStatus = x.newDoneStatus
     }
+    if ('text' in x) {
+      TODOListValue.value[x.editedTODO].tasks.push({
+        text: x.text,
+        doneStatus: x.doneStatus
+      })
+    }
+    if ('isToDelete' in x) {
+      TODOListValue.value[x.editedTODO].tasks = TODOListValue.value[x.editedTODO].tasks.filter(
+        (_, ind) => ind != x.editedTask
+      )
+    }
   }
   isEditModalPage.value = false
   editIndex.value = -1
+  localStorage.setItem('TODOArray', ref(JSON.parse(JSON.stringify(TODOListValue))))
 }
 </script>
 
@@ -110,7 +129,6 @@ const saveAndExit = (changesForTODOArray) => {
       :editIndex="editIndex"
       :TODOArray="TODOListValue"
       @openDeleteTODOFromEdit="openDeleteTODOFromEdit"
-      @deleteTaskFromTODO="deleteTaskFromTODO"
       @cancelAndExit="cancelAndExit"
       @saveAndExit="saveAndExit"
     />

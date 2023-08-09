@@ -5,15 +5,12 @@ const props = defineProps({
 })
 import { ref } from 'vue'
 
-const emit = defineEmits([
-  'openDeleteTODOFromEdit',
-  'deleteTaskFromTODO',
-  'cancelAndExit',
-  'saveAndExit'
-])
+const emit = defineEmits(['openDeleteTODOFromEdit', 'cancelAndExit', 'saveAndExit'])
 
 const isEditMode = ref(false)
+const isAddNewTask = ref(false)
 const changedTaskText = ref('')
+const newTaskText = ref('')
 const editedCurrentTask = ref(-1)
 //const initialTODO = ref({ ...props.TODOArray[props.editIndex] })
 const initialTODO = ref(JSON.parse(JSON.stringify(props.TODOArray[props.editIndex])))
@@ -33,7 +30,13 @@ const editTaskFromTODO = (taskIndex) => {
 // }
 
 const deleteTaskFromTODO = (taskIndex) => {
-  emit('deleteTaskFromTODO', props.editIndex, taskIndex)
+  preparedChanges.value.push({
+    editedTODO: props.editIndex,
+    editedTask: taskIndex,
+    isToDelete: true
+  })
+  initialTODO.value.tasks = initialTODO.value.tasks.filter((_, index) => index != taskIndex)
+  //emit('deleteTaskFromTODO', props.editIndex, taskIndex)
 }
 
 const openDeleteTODOFromEdit = () => {
@@ -41,13 +44,15 @@ const openDeleteTODOFromEdit = () => {
 }
 
 const saveEditedTask = () => {
-  //emit('saveEditedTask', props.editIndex, editedCurrentTask.value, changedTaskText.value)
-  preparedChanges.value.push({
-    editedTODO: props.editIndex,
-    editedTask: editedCurrentTask.value,
-    newText: changedTaskText.value
-  })
-  initialTODO.value.tasks[editedCurrentTask.value].text = changedTaskText.value
+  if (changedTaskText.value != initialTODO.value.tasks[editedCurrentTask.value].text) {
+    //emit('saveEditedTask', props.editIndex, editedCurrentTask.value, changedTaskText.value)
+    preparedChanges.value.push({
+      editedTODO: props.editIndex,
+      editedTask: editedCurrentTask.value,
+      newText: changedTaskText.value
+    })
+    initialTODO.value.tasks[editedCurrentTask.value].text = changedTaskText.value
+  }
   editedCurrentTask.value = -1
   changedTaskText.value = ''
   isEditMode.value = false
@@ -79,6 +84,25 @@ const changeDoneStatus = (taskIndex) => {
     newDoneStatus: !initialTODO.value.tasks[taskIndex].doneStatus
   })
 }
+
+const saveNewTask = () => {
+  initialTODO.value.tasks.push({
+    text: newTaskText.value,
+    doneStatus: false
+  })
+  preparedChanges.value.push({
+    editedTODO: props.editIndex,
+    editedTask: props.TODOArray[props.editIndex].tasks.length,
+    text: newTaskText.value,
+    doneStatus: false
+  })
+  isAddNewTask.value = false
+  newTaskText.value = ''
+}
+const cancelNewTask = () => {
+  isAddNewTask.value = false
+  newTaskText.value = ''
+}
 </script>
 
 <template>
@@ -95,18 +119,26 @@ const changeDoneStatus = (taskIndex) => {
                 @click="changeDoneStatus(taskIndex)"
                 v-model="task.doneStatus"
               />
-              {{ task.text }} {{ task.doneStatus }}
+              {{ task.text }}
             </div>
             <div v-if="isEditMode && taskIndex == editedCurrentTask" class="editMode">
               <input v-model="changedTaskText" />
               <button @click="saveEditedTask">Save</button>
               <button @click="cancelChangesForTask">Cancel</button>
             </div>
-            <div v-if="taskIndex != editedCurrentTask">
+            <div v-if="taskIndex != editedCurrentTask" class="changeTaskButtons">
               <button @click="editTaskFromTODO(taskIndex)">Edit</button>
               <button @click="deleteTaskFromTODO(taskIndex)">Delete</button>
             </div>
           </div>
+        </div>
+        <div v-if="isAddNewTask">
+          <input v-model="newTaskText" />
+          <button @click="saveNewTask">Save</button>
+          <button @click="cancelNewTask">Cancel</button>
+        </div>
+        <div v-if="!isAddNewTask">
+          <button @click="isAddNewTask = !isAddNewTask">Add task</button>
         </div>
         <div>
           <button @click="saveAndExit">Save</button>
@@ -140,10 +172,16 @@ const changeDoneStatus = (taskIndex) => {
   border-radius: 3px;
   padding: 1rem;
 }
+
+.tasks {
+  height: 30px;
+}
+
 .task-field {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  height: 100%;
 }
 
 .editMode {
@@ -161,6 +199,13 @@ button {
   border-radius: 5px;
 }
 button :hover {
-  box-shadow: 5px 5px 20px rgba(159, 30, 30, 0.5);
+  //box-shadow: 5px 5px 20px rgba(159, 30, 30, 0.5);
+}
+.changeTaskButtons {
+  display: none;
+}
+
+.tasks :hover .changeTaskButtons {
+  display: flex;
 }
 </style>
