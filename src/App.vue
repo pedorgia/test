@@ -3,12 +3,23 @@
 // import VueRouter from 'vue-router'
 
 // Vue.use(VueRouter)
+
+//import { RouterLink, RouterView, useRouter } from 'vue-router'
+
 import DeleteModal from './components/DeleteModal.vue'
 import TODOList from './components/TODOList.vue'
-import AddModal from './components/addModal.vue'
+import AddModal from './components/AddModal.vue'
 import { ref } from 'vue'
 import EditModal from './components/EditModal.vue'
-const TODOListValue = ref([])
+
+// const router = useRouter()
+
+// const handleClick = (url) => {
+//   router.push(url)
+//   console.log(url)
+// }
+
+const TODOListValue = ref(JSON.parse(localStorage.getItem('TODOArray')) || [])
 
 const isAddModal = ref(false)
 const isDeleteModal = ref(false)
@@ -16,13 +27,11 @@ const isEditModalPage = ref(false)
 const deleteIndex = ref(-1)
 const editIndex = ref(-1)
 
-localStorage.setItem('TODOArray', ref(JSON.parse(JSON.stringify(TODOListValue))))
-
 const addNewTODO = (title, tasks) => {
   isAddModal.value = false
   TODOListValue.value.push({ title, tasks })
-  localStorage.setItem('TODOArray', ref(JSON.parse(JSON.stringify(TODOListValue))))
-  console.log(localStorage.getItem('TODOArray'))
+  localStorage.setItem('TODOArray', JSON.stringify(TODOListValue.value))
+  console.log(JSON.parse(localStorage.getItem('TODOArray')))
 }
 const openDeleteModal = (x) => {
   isDeleteModal.value = true
@@ -40,7 +49,7 @@ const openEditModalPage = (x) => {
 
 const deleteTODO = (deleteIndex) => {
   TODOListValue.value = TODOListValue.value.filter((_, index) => index != deleteIndex)
-  localStorage.setItem('TODOArray', ref(JSON.parse(JSON.stringify(TODOListValue))))
+  localStorage.setItem('TODOArray', JSON.stringify(TODOListValue.value))
   exitDeleteModal()
 }
 
@@ -50,7 +59,7 @@ const openDeleteTODOFromEdit = (x) => {
   isEditModalPage.value = false
   isDeleteModal.value = true
   deleteIndex.value = x
-  localStorage.setItem('TODOArray', ref(JSON.parse(JSON.stringify(TODOListValue))))
+  localStorage.setItem('TODOArray', JSON.stringify(TODOListValue.value))
 }
 
 // const deleteTaskFromTODO = (TODOindex, taskIndex) => {
@@ -69,7 +78,7 @@ const cancelAndExit = () => {
   //TODOListValue.value[editIndex] = { ...initialTODO }
   isEditModalPage.value = false
   editIndex.value = -1
-  localStorage.setItem('TODOArray', ref(JSON.parse(JSON.stringify(TODOListValue))))
+  localStorage.setItem('TODOArray', JSON.stringify(TODOListValue.value))
 }
 
 const saveAndExit = (changesForTODOArray) => {
@@ -95,7 +104,7 @@ const saveAndExit = (changesForTODOArray) => {
   }
   isEditModalPage.value = false
   editIndex.value = -1
-  localStorage.setItem('TODOArray', ref(JSON.parse(JSON.stringify(TODOListValue))))
+  localStorage.setItem('TODOArray', JSON.stringify(TODOListValue.value))
 }
 </script>
 
