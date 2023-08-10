@@ -4,7 +4,7 @@
 
 // Vue.use(VueRouter)
 
-//import { RouterLink, RouterView, useRouter } from 'vue-router'
+import { RouterLink, RouterView, useRouter } from 'vue-router'
 
 import DeleteModal from './components/DeleteModal.vue'
 import TODOList from './components/TODOList.vue'
@@ -12,12 +12,12 @@ import AddModal from './components/AddModal.vue'
 import { ref } from 'vue'
 import EditModal from './components/EditModal.vue'
 
-// const router = useRouter()
+const router = useRouter()
 
-// const handleClick = (url) => {
-//   router.push(url)
-//   console.log(url)
-// }
+const handleClick = (url) => {
+  router.push(url)
+  console.log(url)
+}
 
 const TODOListValue = ref(JSON.parse(localStorage.getItem('TODOArray')) || [])
 
