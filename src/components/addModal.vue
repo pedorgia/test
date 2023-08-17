@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import router from '../router'
 const TODOvalue = ref('')
 const TODOTaskValue = ref('')
 const TODOtasks = ref([])
@@ -7,7 +8,8 @@ const TODOtasks = ref([])
 const emit = defineEmits(['addNewTODO', 'addTask'])
 
 const addNewTODO = () => {
-  emit('addNewTODO', TODOvalue.value, TODOtasks.value)
+  //emit('addNewTODO', TODOvalue.value, TODOtasks.value)
+  router.push('/home')
 }
 const addTask = () => {
   TODOtasks.value.push({
@@ -19,28 +21,29 @@ const addTask = () => {
 </script>
 
 <template>
-  <Teleport to="#app">
-    <div class="modal-wrapper">
-      <div class="modal">
-        <div>
-          Enter title:
-          <input v-model="TODOvalue" @keydown.enter="addNewTODO" />
+  <!-- <Teleport to="#app">
+    <div class="modal-wrapper">-->
+  <div class="modal">
+    <div>
+      Enter title:
+      <input v-model="TODOvalue" @keydown.enter="addNewTODO" />
+    </div>
+    <div>
+      Enter tasks:
+      <input v-model="TODOTaskValue" @keydown.enter="addNewTODO" />
+      <button @click="addTask" :disabled="!TODOTaskValue">Add task</button>
+      <div v-if="TODOtasks.length > 0">
+        <span>Tasks: </span>
+        <div v-for="task in TODOtasks" :key="task.value">
+          {{ task.text }}
         </div>
-        <div>
-          Enter tasks:
-          <input v-model="TODOTaskValue" @keydown.enter="addNewTODO" />
-          <button @click="addTask" :disabled="!TODOTaskValue">Add task</button>
-          <div v-if="TODOtasks.length > 0">
-            <span>Tasks: </span>
-            <div v-for="task in TODOtasks" :key="task.value">
-              {{ task.text }}
-            </div>
-          </div>
-        </div>
-        <button @click="addNewTODO" :disabled="!TODOvalue">Create</button>
       </div>
     </div>
-  </Teleport>
+    <!-- <button @click="addNewTODO" :disabled="!TODOvalue">Create</button> -->
+    <button @click="addNewTODO" :disabled="!TODOvalue">Create</button>
+  </div>
+  <!-- </div>
+  </Teleport> -->
 </template>
 
 <style scoped>

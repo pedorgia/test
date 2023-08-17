@@ -4,9 +4,16 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
+      path: '/home',
       name: 'home',
-      component: () => import('../components/TODOList.vue')
+      component: () => import('../components/TODOList.vue'),
+      props: true
+    },
+    {
+      path: '/add',
+      name: 'add',
+      component: () => import('../components/AddModal.vue'),
+      props: true
     }
     // {
     //   path: '/about',

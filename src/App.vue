@@ -109,9 +109,9 @@ const saveAndExit = (changesForTODOArray) => {
 </script>
 
 <template>
-  <header>
+  <!-- <header>
     <div class="main-button">
-      <button @click="isAddModal = !isAddModal" class="add-item-button">Add Item</button>
+      <button @click="handleClick('/add')" class="add-item-button">Add Item</button>
     </div>
   </header>
   <div class="todo-array">
@@ -141,7 +141,8 @@ const saveAndExit = (changesForTODOArray) => {
       @cancelAndExit="cancelAndExit"
       @saveAndExit="saveAndExit"
     />
-  </div>
+  </div> -->
+  <RouterView />
 </template>
 
 <style scoped>
