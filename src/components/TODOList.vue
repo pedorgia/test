@@ -3,7 +3,7 @@ import { defineProps } from 'vue'
 
 const props = defineProps({ TODOArray: Array })
 // const emit = defineEmits([])
-const emit = defineEmits(['openDeleteModal, openEditModalPage'])
+const emit = defineEmits(['openDeleteModal', 'openEditModalPage', 'openAddModal'])
 
 const openEditModalPage = (index) => {
   emit('openEditModalPage', index)
@@ -12,9 +12,16 @@ const openEditModalPage = (index) => {
 const openDeleteModal = (index) => {
   emit('openDeleteModal', index)
 }
+
+const openAddModal = () => {
+  emit('openAddModal')
+}
 </script>
 
 <template>
+  <div class="main-button">
+    <button @click="openAddModal" class="add-item-button">Add Item</button>
+  </div>
   <div class="todo-list">
     <div v-for="(item, index) in props.TODOArray" :key="item.value" class="todo">
       <div class="title">{{ index + 1 }}. {{ item.title }}</div>
@@ -22,7 +29,7 @@ const openDeleteModal = (index) => {
         <input type="checkbox" id="checkbox" :disabled="true" v-model="task.doneStatus" />
         {{ task.text }}
       </div>
-      <div v-show="item.tasks.length > 3" style="margin-bottom: 20px">...</div>
+      <div v-show="item?.tasks?.length > 3" style="margin-bottom: 20px">...</div>
       <div class="button-footer">
         <div class="todo-buttons">
           <button class="edit" @click="openEditModalPage(index)">Edit me</button>
@@ -93,6 +100,25 @@ const openDeleteModal = (index) => {
     position: absolute;
     bottom: 20px;
     left: 5px;
+  }
+}
+.main-button {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
+  .add-item-button {
+    height: 90%;
+    width: 60%;
+    font-size: 30px;
+    border: dashed;
+    background-color: fuchsia;
+    color: yellow;
+    cursor: pointer;
+  }
+  .add-item-button:hover {
+    background-color: palevioletred;
   }
 }
 </style>

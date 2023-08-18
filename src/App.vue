@@ -27,6 +27,10 @@ const isEditModalPage = ref(false)
 const deleteIndex = ref(-1)
 const editIndex = ref(-1)
 
+const openAddModal = () => {
+  isAddModal.value = true
+}
+
 const addNewTODO = (title, tasks) => {
   isAddModal.value = false
   TODOListValue.value.push({ title, tasks })
@@ -40,10 +44,12 @@ const openDeleteModal = (x) => {
 
 const exitDeleteModal = () => {
   isDeleteModal.value = false
+  router.push('/')
 }
 
 const openEditModalPage = (x) => {
-  isEditModalPage.value = true
+  router.push('/edit')
+  //isEditModalPage.value = true
   editIndex.value = x
 }
 
@@ -54,29 +60,16 @@ const deleteTODO = (deleteIndex) => {
 }
 
 const openDeleteTODOFromEdit = (x) => {
-  // console.log('in App to delete from edit modal')
-  // console.log(x)
-  isEditModalPage.value = false
+  //isEditModalPage.value = false
   isDeleteModal.value = true
   deleteIndex.value = x
   localStorage.setItem('TODOArray', JSON.stringify(TODOListValue.value))
 }
 
-// const deleteTaskFromTODO = (TODOindex, taskIndex) => {
-//   TODOListValue.value[TODOindex].tasks = TODOListValue.value[TODOindex].tasks.filter(
-//     (_, ind) => ind != taskIndex
-//   )
-// }
-
-// const saveEditedTask = (TODOindex, taskIndex, newText) => {saveAndExit
-//   TODOListValue.value[TODOindex].tasks[taskIndex].text = newText
-//   // isEditModalPage.value = false
-//   // editIndex.value = -1
-// }
-
 const cancelAndExit = () => {
   //TODOListValue.value[editIndex] = { ...initialTODO }
-  isEditModalPage.value = false
+  //isEditModalPage.value = false
+  router.push('/')
   editIndex.value = -1
   localStorage.setItem('TODOArray', JSON.stringify(TODOListValue.value))
 }
@@ -102,7 +95,8 @@ const saveAndExit = (changesForTODOArray) => {
       )
     }
   }
-  isEditModalPage.value = false
+  //isEditModalPage.value = false
+  router.push('/')
   editIndex.value = -1
   localStorage.setItem('TODOArray', JSON.stringify(TODOListValue.value))
 }
@@ -120,7 +114,7 @@ const saveAndExit = (changesForTODOArray) => {
       @openDeleteModal="openDeleteModal"
       @openEditModalPage="openEditModalPage"
     />
-  </div>
+  </div>-->
   <div>
     <AddModal v-if="isAddModal" @addNewTODO="addNewTODO" />
   </div>
@@ -132,7 +126,7 @@ const saveAndExit = (changesForTODOArray) => {
       @deleteTODO="deleteTODO"
     />
   </div>
-  <div>
+  <!--<div>
     <EditModal
       v-if="isEditModalPage"
       :editIndex="editIndex"
@@ -142,7 +136,17 @@ const saveAndExit = (changesForTODOArray) => {
       @saveAndExit="saveAndExit"
     />
   </div> -->
-  <RouterView />
+  <RouterView
+    :TODOArray="TODOListValue"
+    @openDeleteModal="openDeleteModal"
+    @openEditModalPage="openEditModalPage"
+    :editIndex="editIndex"
+    @openDeleteTODOFromEdit="openDeleteTODOFromEdit"
+    @cancelAndExit="cancelAndExit"
+    @saveAndExit="saveAndExit"
+    @addNewTODO="addNewTODO"
+    @openAddModal="openAddModal"
+  />
 </template>
 
 <style scoped>
