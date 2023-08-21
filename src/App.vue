@@ -28,7 +28,8 @@ const deleteIndex = ref(-1)
 const editIndex = ref(-1)
 
 const openAddModal = () => {
-  isAddModal.value = true
+  //isAddModal.value = true
+  router.push('/add')
 }
 
 const addNewTODO = (title, tasks) => {
