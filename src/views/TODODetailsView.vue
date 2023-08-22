@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import TODOList from '../components/TODOList.vue'
+import TODODetails from '../components/TODODetails.vue'
 import { store } from '../services/store'
 </script>
 
 <template>
   <main>
-    <TODOList :TODOArray="store.TODOArray" />
+    <TODODetails :TODOArray="store.TODOArray" />
   </main>
 </template>

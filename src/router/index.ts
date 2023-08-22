@@ -6,19 +6,13 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: () => import('../components/TODOList.vue'),
+      component: () => import('../views/TODOListView.vue'),
       props: true
     },
     {
-      path: '/add',
-      name: 'add',
-      component: () => import('../components/AddModal.vue'),
-      props: true
-    },
-    {
-      path: '/edit',
-      name: 'edit',
-      component: () => import('../components/EditModal.vue'),
+      path: '/details',
+      name: 'details',
+      component: () => import('../views/TODODetailsView.vue'),
       props: true
     }
   ]
