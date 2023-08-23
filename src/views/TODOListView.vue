@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import TODOList from '../components/TODOList.vue'
-import { store } from '../services/store'
 </script>
 
 <template>
   <main>
-    <TODOList :TODOArray="store.TODOArray" />
+    <TODOList />
   </main>
 </template>

@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(),
   routes: [
     {
       path: '/',
@@ -10,7 +10,7 @@ const router = createRouter({
       props: true
     },
     {
-      path: '/details',
+      path: '/details/:id',
       name: 'details',
       component: () => import('../views/TODODetailsView.vue'),
       props: true

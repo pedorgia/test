@@ -1,16 +1,19 @@
 <script setup>
 import { ref } from 'vue'
-import router from '../router'
 const TODOvalue = ref('')
 const TODOTaskValue = ref('')
 const TODOtasks = ref([])
 
-const emit = defineEmits(['addNewTODO', 'addTask'])
+const emit = defineEmits(['addNewTODO', 'addTask', 'exitAddModal'])
 
 const addNewTODO = () => {
   emit('addNewTODO', TODOvalue.value, TODOtasks.value)
-  router.push('/')
 }
+
+const exitAddModal = () => {
+  emit('exitAddModal')
+}
+
 const addTask = () => {
   TODOtasks.value.push({
     text: TODOTaskValue.value,
@@ -39,8 +42,10 @@ const addTask = () => {
             </div>
           </div>
         </div>
-        <!-- <button @click="addNewTODO" :disabled="!TODOvalue">Create</button> -->
-        <button @click="addNewTODO" :disabled="!TODOvalue">Create</button>
+        <div class="action-buttons">
+          <button @click="addNewTODO" :disabled="!TODOvalue">Create</button>
+          <button @click="exitAddModal">Cancel</button>
+        </div>
       </div>
     </div>
   </Teleport>
@@ -66,5 +71,10 @@ const addTask = () => {
   background-color: white;
   border-radius: 3px;
   padding: 1rem;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: space-between;
 }
 </style>

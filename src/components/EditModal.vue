@@ -1,9 +1,9 @@
 <script setup>
 const props = defineProps({
-  editIndex: Number,
-  TODOArray: Array
+  editIndex: Number
 })
 import { ref } from 'vue'
+import { store } from '../services/store'
 
 const emit = defineEmits(['openDeleteTODOFromEdit', 'cancelAndExit', 'saveAndExit'])
 
@@ -12,22 +12,14 @@ const isAddNewTask = ref(false)
 const changedTaskText = ref('')
 const newTaskText = ref('')
 const editedCurrentTask = ref(-1)
-//const initialTODO = ref({ ...props.TODOArray[props.editIndex] })
-const initialTODO = ref(JSON.parse(JSON.stringify(props.TODOArray[props.editIndex])))
+const initialTODO = ref(JSON.parse(JSON.stringify(store.TODOArray[props.editIndex])))
 const preparedChanges = ref([])
 
-// const exitDeleteModal = () => {
-//   emit('exitDeleteModal')
-// }
 const editTaskFromTODO = (taskIndex) => {
   isEditMode.value = true
   editedCurrentTask.value = taskIndex
   changedTaskText.value = initialTODO.value.tasks[taskIndex].text
 }
-
-// const editTaskFromTODO = (taskIndex) => {
-//   emit('editTaskFromTODO', props.editIndex, taskIndex)
-// }
 
 const deleteTaskFromTODO = (taskIndex) => {
   preparedChanges.value.push({
@@ -36,16 +28,22 @@ const deleteTaskFromTODO = (taskIndex) => {
     isToDelete: true
   })
   initialTODO.value.tasks = initialTODO.value.tasks.filter((_, index) => index != taskIndex)
-  //emit('deleteTaskFromTODO', props.editIndex, taskIndex)
 }
 
 const openDeleteTODOFromEdit = () => {
   emit('openDeleteTODOFromEdit', props.editIndex)
 }
 
+const cancelAndExit = () => {
+  emit('cancelAndExit')
+}
+
+const saveAndExit = () => {
+  emit('saveAndExit', preparedChanges.value)
+}
+
 const saveEditedTask = () => {
   if (changedTaskText.value != initialTODO.value.tasks[editedCurrentTask.value].text) {
-    //emit('saveEditedTask', props.editIndex, editedCurrentTask.value, changedTaskText.value)
     preparedChanges.value.push({
       editedTODO: props.editIndex,
       editedTask: editedCurrentTask.value,
@@ -64,16 +62,8 @@ const cancelChangesForTask = () => {
   isEditMode.value = false
 }
 
-const cancelAndExit = () => {
-  emit('cancelAndExit')
-}
-
-const saveAndExit = () => {
-  emit('saveAndExit', preparedChanges.value)
-}
-
 const cancelChanges = () => {
-  initialTODO.value = JSON.parse(JSON.stringify(props.TODOArray[props.editIndex]))
+  initialTODO.value = JSON.parse(JSON.stringify(store.TODOArray[props.editIndex]))
   preparedChanges.value = []
 }
 
@@ -92,13 +82,14 @@ const saveNewTask = () => {
   })
   preparedChanges.value.push({
     editedTODO: props.editIndex,
-    editedTask: props.TODOArray[props.editIndex].tasks.length,
+    editedTask: store.TODOArray[props.editIndex].tasks.length,
     text: newTaskText.value,
     doneStatus: false
   })
   isAddNewTask.value = false
   newTaskText.value = ''
 }
+
 const cancelNewTask = () => {
   isAddNewTask.value = false
   newTaskText.value = ''

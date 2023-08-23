@@ -1,20 +1,85 @@
 <script setup>
-import { defineProps } from 'vue'
+import { ref } from 'vue'
+import AddModal from './AddModal.vue'
+import DeleteModal from './DeleteModal.vue'
+import EditModal from './EditModal.vue'
+import { store } from '../services/store'
+import router from '../router/index'
 
-const props = defineProps({ TODOArray: Array })
-// const emit = defineEmits([])
-const emit = defineEmits(['openDeleteModal', 'openEditModalPage', 'openAddModal'])
+const isAddModal = ref(false)
+const isDeleteModal = ref(false)
+const isEditModal = ref(false)
+const deleteIndex = ref(-1)
+const editIndex = ref(-1)
 
-const openEditModalPage = (index) => {
-  emit('openEditModalPage', index)
-}
-
-const openDeleteModal = (index) => {
-  emit('openDeleteModal', index)
+const openDetails = (index) => {
+  router.push({ name: 'details', params: { id: index } })
 }
 
 const openAddModal = () => {
-  emit('openAddModal')
+  isAddModal.value = true
+}
+
+const exitAddModal = () => {
+  isAddModal.value = false
+}
+
+const openDeleteModal = (x) => {
+  isDeleteModal.value = true
+  deleteIndex.value = x
+}
+
+const exitDeleteModal = () => {
+  isDeleteModal.value = false
+}
+
+const openEditModal = (x) => {
+  isEditModal.value = true
+  editIndex.value = x
+}
+
+const addNewTODO = (title, tasks) => {
+  isAddModal.value = false
+  store.addNewTODO({ title, tasks })
+}
+
+const deleteTODO = (deleteIndex) => {
+  store.deleteTODO(deleteIndex)
+  exitDeleteModal()
+}
+
+const openDeleteTODOFromEdit = (x) => {
+  isEditModal.value = false
+  isDeleteModal.value = true
+  deleteIndex.value = x
+}
+
+const cancelAndExit = () => {
+  isEditModal.value = false
+  editIndex.value = -1
+}
+
+const saveAndExit = (changesForTODOArray) => {
+  for (let i = 0; i < changesForTODOArray.length; i++) {
+    let x = changesForTODOArray[i]
+    if ('newText' in x) {
+      store.editTextInTask(x.editedTODO, x.editedTask, x.newText)
+    }
+    if ('newDoneStatus' in x) {
+      store.editDoneStatusInTask(x.editedTODO, x.editedTask, x.newDoneStatus)
+    }
+    if ('text' in x) {
+      store.addNewTask(x.editedTODO, {
+        text: x.text,
+        doneStatus: x.doneStatus
+      })
+    }
+    if ('isToDelete' in x) {
+      store.deleteTask(x.editedTODO, x.editedTask)
+    }
+  }
+  isEditModal.value = false
+  editIndex.value = -1
 }
 </script>
 
@@ -23,20 +88,42 @@ const openAddModal = () => {
     <button @click="openAddModal" class="add-item-button">Add Item</button>
   </div>
   <div class="todo-list">
-    <div v-for="(item, index) in props.TODOArray" :key="item.value" class="todo">
-      <div class="title">{{ index + 1 }}. {{ item.title }}</div>
-      <div v-for="task in item.tasks" :key="task.value" class="tasks">
-        <input type="checkbox" id="checkbox" :disabled="true" v-model="task.doneStatus" />
-        {{ task.text }}
+    <div v-for="(item, index) in store.TODOArray" :key="item.tasks" class="todo">
+      <div @click="openDetails(index)" class="open-details">
+        <div class="title">{{ index + 1 }}. {{ item.title }}</div>
+        <div v-for="task in item.tasks" :key="task.value" class="tasks">
+          <input type="checkbox" id="checkbox" :disabled="true" v-model="task.doneStatus" />
+          {{ task.text }}
+        </div>
+        <div v-show="item?.tasks?.length > 3" style="margin-bottom: 20px">...</div>
       </div>
-      <div v-show="item?.tasks?.length > 3" style="margin-bottom: 20px">...</div>
       <div class="button-footer">
         <div class="todo-buttons">
-          <button class="edit" @click="openEditModalPage(index)">Edit me</button>
+          <button class="edit" @click="openEditModal(index)">Edit me</button>
           <button class="delete" @click="openDeleteModal(index)">Delete me</button>
         </div>
       </div>
     </div>
+  </div>
+  <div>
+    <AddModal v-if="isAddModal" @addNewTODO="addNewTODO" @exitAddModal="exitAddModal" />
+  </div>
+  <div>
+    <DeleteModal
+      v-if="isDeleteModal"
+      :deleteIndex="deleteIndex"
+      @exitDeleteModal="exitDeleteModal"
+      @deleteTODO="deleteTODO"
+    />
+  </div>
+  <div>
+    <EditModal
+      v-if="isEditModal"
+      :editIndex="editIndex"
+      @openDeleteTODOFromEdit="openDeleteTODOFromEdit"
+      @cancelAndExit="cancelAndExit"
+      @saveAndExit="saveAndExit"
+    />
   </div>
 </template>
 
@@ -50,6 +137,10 @@ const openAddModal = () => {
 
   height: 100%;
   width: 100%;
+}
+.open-details {
+  cursor: pointer;
+  height: 70%;
 }
 .todo {
   height: 200px;
@@ -120,5 +211,12 @@ const openAddModal = () => {
   .add-item-button:hover {
     background-color: palevioletred;
   }
+}
+.todo-array {
+  margin: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  /* justify-content: center;
+  align-items: center; */
 }
 </style>
