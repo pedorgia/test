@@ -17,7 +17,7 @@ import router from '../router/index'
       </div>
     </div>
     <div>
-      <button @click="router.push('/')">Go back to main page</button>
+      <button @click="router.push({ name: 'home' })">Go back to main page</button>
     </div>
   </div>
 </template>

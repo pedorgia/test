@@ -19,3 +19,6 @@ const router = createRouter({
 })
 
 export default router
+
+// https://vuejs.org/guide/components/slots.html#named-slots
+// https://vuejs.org/guide/reusability/composables.html#conventions-and-best-practices

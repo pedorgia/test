@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
-import AddModal from './AddModal.vue'
-import DeleteModal from './DeleteModal.vue'
+import BaseModal from './BaseModal.vue'
+import TODOItem from './TODOItem.vue'
 import EditModal from './EditModal.vue'
 import { store } from '../services/store'
 import router from '../router/index'
@@ -11,11 +11,21 @@ const isDeleteModal = ref(false)
 const isEditModal = ref(false)
 const deleteIndex = ref(-1)
 const editIndex = ref(-1)
+const TODOvalue = ref('')
+const TODOTaskValue = ref('')
+const TODOtasks = ref([])
 
 const openDetails = (index) => {
   router.push({ name: 'details', params: { id: index } })
 }
 
+const addTask = () => {
+  TODOtasks.value.push({
+    text: TODOTaskValue.value,
+    doneStatus: false
+  })
+  TODOTaskValue.value = ''
+}
 const openAddModal = () => {
   isAddModal.value = true
 }
@@ -43,8 +53,8 @@ const addNewTODO = (title, tasks) => {
   store.addNewTODO({ title, tasks })
 }
 
-const deleteTODO = (deleteIndex) => {
-  store.deleteTODO(deleteIndex)
+const deleteTODO = () => {
+  store.deleteTODO(deleteIndex.value)
   exitDeleteModal()
 }
 
@@ -89,33 +99,59 @@ const saveAndExit = (changesForTODOArray) => {
   </div>
   <div class="todo-list">
     <div v-for="(item, index) in store.TODOArray" :key="item.tasks" class="todo">
-      <div @click="openDetails(index)" class="open-details">
-        <div class="title">{{ index + 1 }}. {{ item.title }}</div>
-        <div v-for="task in item.tasks" :key="task.value" class="tasks">
-          <input type="checkbox" id="checkbox" :disabled="true" v-model="task.doneStatus" />
-          {{ task.text }}
-        </div>
-        <div v-show="item?.tasks?.length > 3" style="margin-bottom: 20px">...</div>
-      </div>
-      <div class="button-footer">
-        <div class="todo-buttons">
-          <button class="edit" @click="openEditModal(index)">Edit me</button>
-          <button class="delete" @click="openDeleteModal(index)">Delete me</button>
-        </div>
-      </div>
+      <TODOItem
+        :index="index"
+        :item="item"
+        @handleEditItem="openEditModal"
+        @handleDeleteItem="openDeleteModal"
+        @handleExpand="openDetails"
+      />
     </div>
   </div>
   <div>
-    <AddModal v-if="isAddModal" @addNewTODO="addNewTODO" @exitAddModal="exitAddModal" />
-  </div>
-  <div>
-    <DeleteModal
+    <BaseModal
+      submit-text="Create"
+      cancel-text="Cancel"
+      v-if="isAddModal"
+      @handleSubmit="addNewTODO"
+      @handleCancel="exitAddModal"
+    >
+      <template v-slot:title>
+        <div>
+          Enter title:
+          <input v-model="TODOvalue" @keydown.enter="addNewTODO" /></div
+      ></template>
+      <template v-slot:body>
+        <div>
+          Enter tasks:
+          <input v-model="TODOTaskValue" @keydown.enter="addNewTODO" />
+          <button @click="addTask" :disabled="!TODOTaskValue">Add task</button>
+          <div v-if="TODOtasks.length > 0">
+            <span>Tasks: </span>
+            <div v-for="task in TODOtasks" :key="task.value">
+              {{ task.text }}
+            </div>
+          </div>
+        </div>
+      </template>
+    </BaseModal>
+    <BaseModal
+      submit-text="Delete"
+      cancel-text="Cancel"
       v-if="isDeleteModal"
-      :deleteIndex="deleteIndex"
-      @exitDeleteModal="exitDeleteModal"
-      @deleteTODO="deleteTODO"
-    />
+      @handleSubmit="deleteTODO"
+      @handleCancel="exitDeleteModal"
+    >
+      <template v-slot:body>
+        <div class="modal-wrapper">
+          <div class="modal">
+            <div class="question">Really delete?</div>
+          </div>
+        </div>
+      </template>
+    </BaseModal>
   </div>
+
   <div>
     <EditModal
       v-if="isEditModal"
