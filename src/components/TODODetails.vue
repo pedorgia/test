@@ -61,9 +61,9 @@ button {
   cursor: pointer;
   border-radius: 5px;
 }
-button :hover {
-  //box-shadow: 5px 5px 20px rgba(159, 30, 30, 0.5);
-}
+// button :hover {
+//   //box-shadow: 5px 5px 20px rgba(159, 30, 30, 0.5);
+// }
 .changeTaskButtons {
   display: none;
 }

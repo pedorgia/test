@@ -1,5 +1,5 @@
 <script setup>
-defineProps({ submitText: String, cancelText: String })
+defineProps({ submitText: String, cancelText: String, undoText: String, deleteText: String })
 const emit = defineEmits(['handleSubmit', 'handleCancel'])
 </script>
 
@@ -11,6 +11,12 @@ const emit = defineEmits(['handleSubmit', 'handleCancel'])
         <slot name="body"></slot>
         <div class="action-buttons">
           <button @click="emit('handleSubmit', undefined)">{{ submitText }}</button>
+          <button v-if="undoText" @click="emit('handleUndo', undefined)">
+            {{ undoText }}
+          </button>
+          <button v-if="deleteText" @click="emit('handleDelete', undefined)">
+            {{ deleteText }}
+          </button>
           <button @click="emit('handleCancel', undefined)">{{ cancelText }}</button>
         </div>
       </div>

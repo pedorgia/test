@@ -151,15 +151,63 @@ const saveAndExit = (changesForTODOArray) => {
       </template>
     </BaseModal>
   </div>
-
   <div>
-    <EditModal
+    <BaseModal
+      submit-text="Save"
+      undo-text="Undo"
+      delete-text="Delete"
+      cancel-text="Cancel"
+      v-if="isEditModal"
+      @handleSubmit="saveAndExit"
+      @handleCancel="cancelAndExit"
+    >
+      <template v-slot:title>
+        <div class="title">{{ editIndex + 1 }}. {{ store.TODOArray[editIndex].title }}</div>
+      </template>
+      <template v-slot:body>
+        <div
+          v-for="(task, taskIndex) in store.TODOArray[editIndex].tasks"
+          :key="task.value"
+          class="tasks"
+        >
+          <div class="task-field">
+            <div v-if="taskIndex != editedCurrentTask">
+              <input
+                type="checkbox"
+                id="checkbox"
+                @click="changeDoneStatus(taskIndex)"
+                v-model="task.doneStatus"
+              />
+              {{ task.text }}
+            </div>
+            <div v-if="isEditMode && taskIndex == editedCurrentTask" class="editMode">
+              <input v-model="changedTaskText" />
+              <button @click="saveEditedTask">Save</button>
+              <button @click="cancelChangesForTask">Cancel</button>
+            </div>
+            <div v-if="taskIndex != editedCurrentTask" class="changeTaskButtons">
+              <button @click="editTaskFromTODO(taskIndex)">Edit</button>
+              <button @click="deleteTaskFromTODO(taskIndex)">Delete</button>
+            </div>
+          </div>
+        </div>
+        <div v-if="isAddNewTask">
+          <input v-model="newTaskText" />
+          <button @click="saveNewTask">Save</button>
+          <button @click="cancelNewTask">Cancel</button>
+        </div>
+        <div v-if="!isAddNewTask">
+          <button @click="isAddNewTask = !isAddNewTask">Add task</button>
+        </div>
+      </template>
+    </BaseModal>
+    <!-- <EditModal
       v-if="isEditModal"
       :editIndex="editIndex"
       @openDeleteTODOFromEdit="openDeleteTODOFromEdit"
       @cancelAndExit="cancelAndExit"
       @saveAndExit="saveAndExit"
-    />
+    /> -->
   </div>
 </template>
 
