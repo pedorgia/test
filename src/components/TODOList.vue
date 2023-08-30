@@ -1,188 +1,192 @@
 <script setup>
-import { ref, readonly } from 'vue'
-import BaseModal from './BaseModal.vue'
-import TODOItem from './TODOItem.vue'
-//import EditModal from './EditModal.vue'
-import { TODOArray, actions } from '../services/store'
-import router from '../router/index'
+  import { ref, readonly } from 'vue';
+  import BaseModal from './BaseModal.vue';
+  import AddModal from './AddModal.vue';
+  import TODOItem from './TODOItem.vue';
+  //import EditModal from './EditModal.vue'
+  import { TODOArray, actions } from '../services/store';
+  import router from '../router/index';
 
-const isAddModal = ref(false)
-const isDeleteModal = ref(false)
-const isEditModal = ref(false)
-const deleteIndex = ref(-1)
-const editIndex = ref(-1)
-const TODOvalue = ref('')
-const TODOTaskValue = ref('')
-const TODOtasks = ref([])
+  const isAddModal = ref(false);
+  const isDeleteModal = ref(false);
+  const isEditModal = ref(false);
+  const deleteIndex = ref(-1);
+  const editIndex = ref(-1);
+  const TODOvalue = ref('');
+  //const TODOTaskValue = ref('');
+  const TODOtasks = ref([]);
 
-const isEditMode = ref(false)
-const isAddNewTask = ref(false)
-const changedTaskText = ref('')
-const newTaskText = ref('')
-const editedCurrentTask = ref(-1)
-const TODOArrayCopy = readonly(TODOArray)
-//const initialTODO = ref(JSON.parse(JSON.stringify(store.TODOArray[editIndex.value])) || [])
-const initialTODOArray = ref(JSON.parse(JSON.stringify(TODOArrayCopy)))
-const preparedChanges = ref([])
+  const isEditMode = ref(false);
+  const isAddNewTask = ref(false);
+  const changedTaskText = ref('');
+  const newTaskText = ref('');
+  const editedCurrentTask = ref(-1);
+  const TODOArrayCopy = readonly(TODOArray);
+  //const initialTODO = ref(JSON.parse(JSON.stringify(store.TODOArray[editIndex.value])) || [])
+  const initialTODOArray = ref(JSON.parse(JSON.stringify(TODOArrayCopy)));
+  const preparedChanges = ref([]);
 
-const editTaskFromTODO = (taskIndex) => {
-  isEditMode.value = true
-  editedCurrentTask.value = taskIndex
-  changedTaskText.value = initialTODOArray.value[editIndex.value].tasks[taskIndex].text
-}
+  const editTaskFromTODO = (taskIndex) => {
+    isEditMode.value = true;
+    editedCurrentTask.value = taskIndex;
+    changedTaskText.value =
+      initialTODOArray.value[editIndex.value].tasks[taskIndex].text;
+  };
 
-const deleteTaskFromTODO = (taskIndex) => {
-  preparedChanges.value.push({
-    editedTODO: editIndex.value,
-    editedTask: taskIndex,
-    isToDelete: true
-  })
-  initialTODOArray.value[editIndex.value].tasks = initialTODOArray.value[
-    editIndex.value
-  ].tasks.filter((_, index) => index != taskIndex)
-}
-
-const saveEditedTask = () => {
-  if (
-    changedTaskText.value !=
-    initialTODOArray.value[editIndex.value].tasks[editedCurrentTask.value].text
-  ) {
+  const deleteTaskFromTODO = (taskIndex) => {
     preparedChanges.value.push({
       editedTODO: editIndex.value,
-      editedTask: editedCurrentTask.value,
-      newText: changedTaskText.value
-    })
-    initialTODOArray.value[editIndex.value].tasks[editedCurrentTask.value].text =
-      changedTaskText.value
-  }
-  editedCurrentTask.value = -1
-  changedTaskText.value = ''
-  isEditMode.value = false
-}
+      editedTask: taskIndex,
+      isToDelete: true,
+    });
+    initialTODOArray.value[editIndex.value].tasks = initialTODOArray.value[
+      editIndex.value
+    ].tasks.filter((_, index) => index != taskIndex);
+  };
 
-const cancelChangesForTask = () => {
-  editedCurrentTask.value = -1
-  changedTaskText.value = ''
-  isEditMode.value = false
-}
-
-const cancelChanges = () => {
-  initialTODOArray.value[editIndex.value] = JSON.parse(
-    JSON.stringify(TODOArrayCopy[editIndex.value])
-  )
-  preparedChanges.value = []
-}
-
-const changeDoneStatus = (taskIndex) => {
-  preparedChanges.value.push({
-    editedTODO: editIndex.value,
-    editedTask: taskIndex,
-    newDoneStatus: !initialTODOArray.value[editIndex.value].tasks[taskIndex].doneStatus
-  })
-}
-
-const saveNewTask = () => {
-  initialTODOArray.value[editIndex.value].tasks.push({
-    text: newTaskText.value,
-    doneStatus: false
-  })
-  preparedChanges.value.push({
-    editedTODO: editIndex.value,
-    editedTask: initialTODOArray.value[editIndex.value].tasks.length,
-    text: newTaskText.value,
-    doneStatus: false
-  })
-  isAddNewTask.value = false
-  newTaskText.value = ''
-}
-
-const cancelNewTask = () => {
-  isAddNewTask.value = false
-  newTaskText.value = ''
-}
-
-const openDetails = (index) => {
-  router.push({ name: 'details', params: { id: index } })
-}
-
-const addTask = () => {
-  TODOtasks.value.push({
-    text: TODOTaskValue.value,
-    doneStatus: false
-  })
-  TODOTaskValue.value = ''
-}
-const openAddModal = () => {
-  isAddModal.value = true
-}
-
-const exitAddModal = () => {
-  isAddModal.value = false
-}
-
-const openDeleteModal = (x) => {
-  isDeleteModal.value = true
-  deleteIndex.value = x
-}
-
-const exitDeleteModal = () => {
-  isDeleteModal.value = false
-}
-
-const openEditModal = (x) => {
-  isEditModal.value = true
-  editIndex.value = x
-  initialTODOArray.value = JSON.parse(JSON.stringify(TODOArrayCopy))
-}
-
-const addNewTODO = () => {
-  isAddModal.value = false
-  actions.addNewTODO({ title: TODOvalue.value, tasks: TODOtasks.value })
-}
-
-const deleteTODO = () => {
-  actions.deleteTODO(deleteIndex.value)
-  exitDeleteModal()
-}
-
-const openDeleteTODOFromEdit = (x) => {
-  isEditModal.value = false
-  isDeleteModal.value = true
-  deleteIndex.value = x || editIndex.value
-}
-
-const cancelAndExit = () => {
-  isEditModal.value = false
-  editIndex.value = -1
-}
-
-const saveAndExit = () => {
-  for (let i = 0; i < preparedChanges.value.length; i++) {
-    let x = preparedChanges.value[i]
-    if ('newText' in x) {
-      actions.editTextInTask(x.editedTODO, x.editedTask, x.newText)
+  const saveEditedTask = () => {
+    if (
+      changedTaskText.value !=
+      initialTODOArray.value[editIndex.value].tasks[editedCurrentTask.value]
+        .text
+    ) {
+      preparedChanges.value.push({
+        editedTODO: editIndex.value,
+        editedTask: editedCurrentTask.value,
+        newText: changedTaskText.value,
+      });
+      initialTODOArray.value[editIndex.value].tasks[
+        editedCurrentTask.value
+      ].text = changedTaskText.value;
     }
-    if ('newDoneStatus' in x) {
-      actions.editDoneStatusInTask(x.editedTODO, x.editedTask, x.newDoneStatus)
+    editedCurrentTask.value = -1;
+    changedTaskText.value = '';
+    isEditMode.value = false;
+  };
+
+  const cancelChangesForTask = () => {
+    editedCurrentTask.value = -1;
+    changedTaskText.value = '';
+    isEditMode.value = false;
+  };
+
+  const cancelChanges = () => {
+    initialTODOArray.value[editIndex.value] = JSON.parse(
+      JSON.stringify(TODOArrayCopy[editIndex.value])
+    );
+    preparedChanges.value = [];
+  };
+
+  const changeDoneStatus = (taskIndex) => {
+    preparedChanges.value.push({
+      editedTODO: editIndex.value,
+      editedTask: taskIndex,
+      newDoneStatus:
+        !initialTODOArray.value[editIndex.value].tasks[taskIndex].doneStatus,
+    });
+  };
+
+  const saveNewTask = () => {
+    initialTODOArray.value[editIndex.value].tasks.push({
+      text: newTaskText.value,
+      doneStatus: false,
+    });
+    preparedChanges.value.push({
+      editedTODO: editIndex.value,
+      editedTask: initialTODOArray.value[editIndex.value].tasks.length,
+      text: newTaskText.value,
+      doneStatus: false,
+    });
+    isAddNewTask.value = false;
+    newTaskText.value = '';
+  };
+
+  const cancelNewTask = () => {
+    isAddNewTask.value = false;
+    newTaskText.value = '';
+  };
+
+  const openDetails = (index) => {
+    router.push({ name: 'details', params: { id: index } });
+  };
+
+  const openAddModal = () => {
+    isAddModal.value = true;
+  };
+
+  const exitAddModal = () => {
+    isAddModal.value = false;
+  };
+
+  const openDeleteModal = (x) => {
+    isDeleteModal.value = true;
+    deleteIndex.value = x;
+  };
+
+  const exitDeleteModal = () => {
+    isDeleteModal.value = false;
+  };
+
+  const openEditModal = (x) => {
+    isEditModal.value = true;
+    editIndex.value = x;
+    initialTODOArray.value = JSON.parse(JSON.stringify(TODOArrayCopy));
+  };
+
+  const addNewTODO = () => {
+    isAddModal.value = false;
+    actions.addNewTODO({ title: TODOvalue.value, tasks: TODOtasks.value });
+  };
+
+  const deleteTODO = () => {
+    actions.deleteTODO(deleteIndex.value);
+    exitDeleteModal();
+  };
+
+  const openDeleteTODOFromEdit = (x) => {
+    isEditModal.value = false;
+    isDeleteModal.value = true;
+    deleteIndex.value = x || editIndex.value;
+  };
+
+  const cancelAndExit = () => {
+    isEditModal.value = false;
+    editIndex.value = -1;
+  };
+
+  const saveAndExit = () => {
+    for (let i = 0; i < preparedChanges.value.length; i++) {
+      let x = preparedChanges.value[i];
+      if ('newText' in x) {
+        actions.editTextInTask(x.editedTODO, x.editedTask, x.newText);
+      }
+      if ('newDoneStatus' in x) {
+        actions.editDoneStatusInTask(
+          x.editedTODO,
+          x.editedTask,
+          x.newDoneStatus
+        );
+      }
+      if ('text' in x) {
+        actions.addNewTask(x.editedTODO, {
+          text: x.text,
+          doneStatus: x.doneStatus,
+        });
+      }
+      if ('isToDelete' in x) {
+        actions.deleteTask(x.editedTODO, x.editedTask);
+      }
     }
-    if ('text' in x) {
-      actions.addNewTask(x.editedTODO, {
-        text: x.text,
-        doneStatus: x.doneStatus
-      })
-    }
-    if ('isToDelete' in x) {
-      actions.deleteTask(x.editedTODO, x.editedTask)
-    }
-  }
-  isEditModal.value = false
-  editIndex.value = -1
-}
+    isEditModal.value = false;
+    editIndex.value = -1;
+  };
 </script>
 
 <template>
   <div class="main-button">
-    <v-button @onClick="openAddModal" class="add-item-button">Add Item</v-button>
+    <v-button @onClick="openAddModal" class="add-item-button"
+      >Add Item</v-button
+    >
   </div>
   <div class="todo-list">
     <div v-for="(item, index) in TODOArrayCopy" :key="item.tasks" class="todo">
@@ -206,6 +210,15 @@ const saveAndExit = () => {
       <template v-slot:title>
         <div>
           Enter title:
+          <input v-model="TODOvalue" />
+        </div>
+      </template>
+      <template v-slot:body>
+        <AddModal />
+      </template>
+      <!-- <template v-slot:title>
+        <div>
+          Enter title:
           <input v-model="TODOvalue" /></div
       ></template>
       <template v-slot:body>
@@ -220,7 +233,7 @@ const saveAndExit = () => {
             </div>
           </div>
         </div>
-      </template>
+      </template> -->
     </BaseModal>
     <BaseModal
       submit-text="Delete"
@@ -251,7 +264,9 @@ const saveAndExit = () => {
       @handleCancel="cancelAndExit"
     >
       <template v-slot:title>
-        <div class="title">{{ editIndex + 1 }}. {{ initialTODOArray[editIndex].title }}</div>
+        <div class="title">
+          {{ editIndex + 1 }}. {{ initialTODOArray[editIndex].title }}
+        </div>
       </template>
       <template v-slot:body>
         <div
@@ -269,14 +284,22 @@ const saveAndExit = () => {
               />
               {{ task.text }}
             </div>
-            <div v-if="isEditMode && taskIndex == editedCurrentTask" class="editMode">
+            <div
+              v-if="isEditMode && taskIndex == editedCurrentTask"
+              class="editMode"
+            >
               <input v-model="changedTaskText" />
               <v-button @onClick="saveEditedTask">Save</v-button>
               <v-button @onClick="cancelChangesForTask">Cancel</v-button>
             </div>
-            <div v-if="taskIndex != editedCurrentTask" class="changeTaskButtons">
+            <div
+              v-if="taskIndex != editedCurrentTask"
+              class="changeTaskButtons"
+            >
               <v-button @onClick="editTaskFromTODO(taskIndex)">Edit</v-button>
-              <v-button @onClick="deleteTaskFromTODO(taskIndex)">Delete</v-button>
+              <v-button @onClick="deleteTaskFromTODO(taskIndex)"
+                >Delete</v-button
+              >
             </div>
           </div>
         </div>
@@ -301,151 +324,151 @@ const saveAndExit = () => {
 </template>
 
 <style scoped>
-.modal-wrapper {
-  width: 100vw;
-  height: 100vh;
-  position: absolute;
-  top: 0;
-  left: 0;
-  background-color: rgba(1, 0, 0, 0.3);
-}
-.modal {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  display: block;
-
-  transform: translateX(-50%);
-  transform: translateY(-50%) translateX(-50%);
-  background-color: white;
-  border-radius: 3px;
-  padding: 1rem;
-}
-.todo-list {
-  margin-top: 50px;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  /* justify-content: center; */
-
-  height: 100%;
-  width: 100%;
-}
-.open-details {
-  cursor: pointer;
-  height: 70%;
-}
-.todo {
-  height: 200px;
-  width: 150px;
-  text-align: center;
-  border: dashed;
-  border-color: blue;
-  margin-right: 30px;
-  background-color: aqua;
-  margin-bottom: 10px;
-  /* cursor: pointer; */
-  overflow: hidden;
-  position: relative;
-
-  .title {
-    padding-top: 10px;
-    width: 100%;
-    height: 20%;
-    overflow-x: hidden;
-    white-space: nowrap;
+  .modal-wrapper {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(1, 0, 0, 0.3);
   }
+  .modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: block;
+
+    transform: translateX(-50%);
+    transform: translateY(-50%) translateX(-50%);
+    background-color: white;
+    border-radius: 3px;
+    padding: 1rem;
+  }
+  .todo-list {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    /* justify-content: center; */
+
+    height: 100%;
+    width: 100%;
+  }
+  .open-details {
+    cursor: pointer;
+    height: 70%;
+  }
+  .todo {
+    height: 200px;
+    width: 150px;
+    text-align: center;
+    border: dashed;
+    border-color: blue;
+    margin-right: 30px;
+    background-color: aqua;
+    margin-bottom: 10px;
+    /* cursor: pointer; */
+    overflow: hidden;
+    position: relative;
+
+    .title {
+      padding-top: 10px;
+      width: 100%;
+      height: 20%;
+      overflow-x: hidden;
+      white-space: nowrap;
+    }
+    .tasks {
+      text-align: left;
+      display: none;
+    }
+    .tasks:nth-child(-n + 4) {
+      display: block;
+    }
+    .todo-buttons {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      text-align: center;
+    }
+    .delete {
+      background-color: coral;
+      color: white;
+      width: 40%;
+      cursor: pointer;
+    }
+    .edit {
+      background-color: coral;
+      color: white;
+      width: 40%;
+      cursor: pointer;
+    }
+    .button-footer {
+      position: absolute;
+      bottom: 20px;
+      left: 5px;
+    }
+  }
+  .main-button {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60px;
+    .add-item-button {
+      height: 90%;
+      width: 60%;
+      font-size: 30px;
+      border: dashed;
+      background-color: fuchsia;
+      color: yellow;
+      cursor: pointer;
+    }
+    .add-item-button:hover {
+      background-color: palevioletred;
+    }
+  }
+  .todo-array {
+    margin: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    /* justify-content: center;
+  align-items: center; */
+  }
+
   .tasks {
-    text-align: left;
+    height: 30px;
+  }
+
+  .task-field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .editMode {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  button {
+    margin: 5px;
+    border: 2px;
+    color: white;
+    background-color: red;
+
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  button :hover {
+    /* box-shadow: 5px 5px 20px rgba(159, 30, 30, 0.5); */
+  }
+  .changeTaskButtons {
     display: none;
   }
-  .tasks:nth-child(-n + 4) {
-    display: block;
-  }
-  .todo-buttons {
+
+  .tasks :hover .changeTaskButtons {
     display: flex;
-    justify-content: space-around;
-    align-items: center;
-    text-align: center;
   }
-  .delete {
-    background-color: coral;
-    color: white;
-    width: 40%;
-    cursor: pointer;
-  }
-  .edit {
-    background-color: coral;
-    color: white;
-    width: 40%;
-    cursor: pointer;
-  }
-  .button-footer {
-    position: absolute;
-    bottom: 20px;
-    left: 5px;
-  }
-}
-.main-button {
-  margin-top: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 60px;
-  .add-item-button {
-    height: 90%;
-    width: 60%;
-    font-size: 30px;
-    border: dashed;
-    background-color: fuchsia;
-    color: yellow;
-    cursor: pointer;
-  }
-  .add-item-button:hover {
-    background-color: palevioletred;
-  }
-}
-.todo-array {
-  margin: 30px;
-  display: flex;
-  flex-wrap: wrap;
-  /* justify-content: center;
-  align-items: center; */
-}
-
-.tasks {
-  height: 30px;
-}
-
-.task-field {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 100%;
-}
-
-.editMode {
-  display: flex;
-  justify-content: space-between;
-}
-
-button {
-  margin: 5px;
-  border: 2px;
-  color: white;
-  background-color: red;
-
-  cursor: pointer;
-  border-radius: 5px;
-}
-button :hover {
-  /* box-shadow: 5px 5px 20px rgba(159, 30, 30, 0.5); */
-}
-.changeTaskButtons {
-  display: none;
-}
-
-.tasks :hover .changeTaskButtons {
-  display: flex;
-}
 </style>

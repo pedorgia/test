@@ -1,33 +1,37 @@
-import { reactive, ref } from 'vue'
+import { reactive, ref } from 'vue';
 
-export const TODOArray = JSON.parse(localStorage.getItem('TODOArray')) || []
+export const TODOArray = ref(
+  JSON.parse(localStorage.getItem('TODOArray')) || []
+);
 
-export const actions = reactive({
+export const actions = {
   addNewTODO(newTODO) {
-    TODOArray.push(newTODO)
-    localStorage.setItem('TODOArray', JSON.stringify(TODOArray))
+    TODOArray.value.push(newTODO);
+    localStorage.setItem('TODOArray', JSON.stringify(TODOArray.value));
   },
   deleteTODO(deleteIndex) {
-    TODOArray.splice(deleteIndex, 1)
-    localStorage.setItem('TODOArray', JSON.stringify(TODOArray))
+    TODOArray.value.splice(deleteIndex, 1);
+    localStorage.setItem('TODOArray', JSON.stringify(TODOArray.value));
   },
   editTextInTask(TODOIndex, taskIndex, newText) {
-    TODOArray[TODOIndex].tasks[taskIndex].text = newText
-    localStorage.setItem('TODOArray', JSON.stringify(TODOArray))
+    TODOArray.value[TODOIndex].tasks[taskIndex].text = newText;
+    localStorage.setItem('TODOArray', JSON.stringify(TODOArray.value));
   },
   editDoneStatusInTask(TODOIndex, taskIndex, newDoneStatus) {
-    TODOArray[TODOIndex].tasks[taskIndex].doneStatus = newDoneStatus
-    localStorage.setItem('TODOArray', JSON.stringify(TODOArray))
+    TODOArray.value[TODOIndex].tasks[taskIndex].doneStatus = newDoneStatus;
+    localStorage.setItem('TODOArray', JSON.stringify(TODOArray.value));
   },
   addNewTask(TODOIndex, newTask) {
-    TODOArray[TODOIndex].tasks.push(newTask)
-    localStorage.setItem('TODOArray', JSON.stringify(TODOArray))
+    TODOArray.value[TODOIndex].tasks.push(newTask);
+    localStorage.setItem('TODOArray', JSON.stringify(TODOArray.value));
   },
   deleteTask(TODOIndex, taskIndex) {
-    TODOArray[TODOIndex].tasks = TODOArray[TODOIndex].tasks.filter((_, ind) => ind != taskIndex)
-    localStorage.setItem('TODOArray', JSON.stringify(TODOArray))
-  }
-})
+    TODOArray.value[TODOIndex].tasks = TODOArray[TODOIndex].tasks.filter(
+      (_, ind) => ind != taskIndex
+    );
+    localStorage.setItem('TODOArray', JSON.stringify(TODOArray.value));
+  },
+};
 
 // export const store = reactive({
 //   TODOArray: JSON.parse(localStorage.getItem('TODOArray')) || [],
