@@ -1,9 +1,9 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, readonly } from 'vue'
 import BaseModal from './BaseModal.vue'
 import TODOItem from './TODOItem.vue'
-import EditModal from './EditModal.vue'
-import { store } from '../services/store'
+//import EditModal from './EditModal.vue'
+import { TODOArray, actions } from '../services/store'
 import router from '../router/index'
 
 const isAddModal = ref(false)
@@ -14,6 +14,92 @@ const editIndex = ref(-1)
 const TODOvalue = ref('')
 const TODOTaskValue = ref('')
 const TODOtasks = ref([])
+
+const isEditMode = ref(false)
+const isAddNewTask = ref(false)
+const changedTaskText = ref('')
+const newTaskText = ref('')
+const editedCurrentTask = ref(-1)
+const TODOArrayCopy = readonly(TODOArray)
+//const initialTODO = ref(JSON.parse(JSON.stringify(store.TODOArray[editIndex.value])) || [])
+const initialTODOArray = ref(JSON.parse(JSON.stringify(TODOArrayCopy)))
+const preparedChanges = ref([])
+
+const editTaskFromTODO = (taskIndex) => {
+  isEditMode.value = true
+  editedCurrentTask.value = taskIndex
+  changedTaskText.value = initialTODOArray.value[editIndex.value].tasks[taskIndex].text
+}
+
+const deleteTaskFromTODO = (taskIndex) => {
+  preparedChanges.value.push({
+    editedTODO: editIndex.value,
+    editedTask: taskIndex,
+    isToDelete: true
+  })
+  initialTODOArray.value[editIndex.value].tasks = initialTODOArray.value[
+    editIndex.value
+  ].tasks.filter((_, index) => index != taskIndex)
+}
+
+const saveEditedTask = () => {
+  if (
+    changedTaskText.value !=
+    initialTODOArray.value[editIndex.value].tasks[editedCurrentTask.value].text
+  ) {
+    preparedChanges.value.push({
+      editedTODO: editIndex.value,
+      editedTask: editedCurrentTask.value,
+      newText: changedTaskText.value
+    })
+    initialTODOArray.value[editIndex.value].tasks[editedCurrentTask.value].text =
+      changedTaskText.value
+  }
+  editedCurrentTask.value = -1
+  changedTaskText.value = ''
+  isEditMode.value = false
+}
+
+const cancelChangesForTask = () => {
+  editedCurrentTask.value = -1
+  changedTaskText.value = ''
+  isEditMode.value = false
+}
+
+const cancelChanges = () => {
+  initialTODOArray.value[editIndex.value] = JSON.parse(
+    JSON.stringify(TODOArrayCopy[editIndex.value])
+  )
+  preparedChanges.value = []
+}
+
+const changeDoneStatus = (taskIndex) => {
+  preparedChanges.value.push({
+    editedTODO: editIndex.value,
+    editedTask: taskIndex,
+    newDoneStatus: !initialTODOArray.value[editIndex.value].tasks[taskIndex].doneStatus
+  })
+}
+
+const saveNewTask = () => {
+  initialTODOArray.value[editIndex.value].tasks.push({
+    text: newTaskText.value,
+    doneStatus: false
+  })
+  preparedChanges.value.push({
+    editedTODO: editIndex.value,
+    editedTask: initialTODOArray.value[editIndex.value].tasks.length,
+    text: newTaskText.value,
+    doneStatus: false
+  })
+  isAddNewTask.value = false
+  newTaskText.value = ''
+}
+
+const cancelNewTask = () => {
+  isAddNewTask.value = false
+  newTaskText.value = ''
+}
 
 const openDetails = (index) => {
   router.push({ name: 'details', params: { id: index } })
@@ -46,22 +132,23 @@ const exitDeleteModal = () => {
 const openEditModal = (x) => {
   isEditModal.value = true
   editIndex.value = x
+  initialTODOArray.value = JSON.parse(JSON.stringify(TODOArrayCopy))
 }
 
-const addNewTODO = (title, tasks) => {
+const addNewTODO = () => {
   isAddModal.value = false
-  store.addNewTODO({ title, tasks })
+  actions.addNewTODO({ title: TODOvalue.value, tasks: TODOtasks.value })
 }
 
 const deleteTODO = () => {
-  store.deleteTODO(deleteIndex.value)
+  actions.deleteTODO(deleteIndex.value)
   exitDeleteModal()
 }
 
 const openDeleteTODOFromEdit = (x) => {
   isEditModal.value = false
   isDeleteModal.value = true
-  deleteIndex.value = x
+  deleteIndex.value = x || editIndex.value
 }
 
 const cancelAndExit = () => {
@@ -69,23 +156,23 @@ const cancelAndExit = () => {
   editIndex.value = -1
 }
 
-const saveAndExit = (changesForTODOArray) => {
-  for (let i = 0; i < changesForTODOArray.length; i++) {
-    let x = changesForTODOArray[i]
+const saveAndExit = () => {
+  for (let i = 0; i < preparedChanges.value.length; i++) {
+    let x = preparedChanges.value[i]
     if ('newText' in x) {
-      store.editTextInTask(x.editedTODO, x.editedTask, x.newText)
+      actions.editTextInTask(x.editedTODO, x.editedTask, x.newText)
     }
     if ('newDoneStatus' in x) {
-      store.editDoneStatusInTask(x.editedTODO, x.editedTask, x.newDoneStatus)
+      actions.editDoneStatusInTask(x.editedTODO, x.editedTask, x.newDoneStatus)
     }
     if ('text' in x) {
-      store.addNewTask(x.editedTODO, {
+      actions.addNewTask(x.editedTODO, {
         text: x.text,
         doneStatus: x.doneStatus
       })
     }
     if ('isToDelete' in x) {
-      store.deleteTask(x.editedTODO, x.editedTask)
+      actions.deleteTask(x.editedTODO, x.editedTask)
     }
   }
   isEditModal.value = false
@@ -95,10 +182,10 @@ const saveAndExit = (changesForTODOArray) => {
 
 <template>
   <div class="main-button">
-    <button @click="openAddModal" class="add-item-button">Add Item</button>
+    <v-button @onClick="openAddModal" class="add-item-button">Add Item</v-button>
   </div>
   <div class="todo-list">
-    <div v-for="(item, index) in store.TODOArray" :key="item.tasks" class="todo">
+    <div v-for="(item, index) in TODOArrayCopy" :key="item.tasks" class="todo">
       <TODOItem
         :index="index"
         :item="item"
@@ -119,13 +206,13 @@ const saveAndExit = (changesForTODOArray) => {
       <template v-slot:title>
         <div>
           Enter title:
-          <input v-model="TODOvalue" @keydown.enter="addNewTODO" /></div
+          <input v-model="TODOvalue" /></div
       ></template>
       <template v-slot:body>
         <div>
           Enter tasks:
-          <input v-model="TODOTaskValue" @keydown.enter="addNewTODO" />
-          <button @click="addTask" :disabled="!TODOTaskValue">Add task</button>
+          <input v-model="TODOTaskValue" />
+          <v-button @onClick="addTask" :disabled="!TODOTaskValue">Add task</v-button>
           <div v-if="TODOtasks.length > 0">
             <span>Tasks: </span>
             <div v-for="task in TODOtasks" :key="task.value">
@@ -143,8 +230,8 @@ const saveAndExit = (changesForTODOArray) => {
       @handleCancel="exitDeleteModal"
     >
       <template v-slot:body>
-        <div class="modal-wrapper">
-          <div class="modal">
+        <div>
+          <div>
             <div class="question">Really delete?</div>
           </div>
         </div>
@@ -159,14 +246,16 @@ const saveAndExit = (changesForTODOArray) => {
       cancel-text="Cancel"
       v-if="isEditModal"
       @handleSubmit="saveAndExit"
+      @handleUndo="cancelChanges"
+      @handleDelete="openDeleteTODOFromEdit"
       @handleCancel="cancelAndExit"
     >
       <template v-slot:title>
-        <div class="title">{{ editIndex + 1 }}. {{ store.TODOArray[editIndex].title }}</div>
+        <div class="title">{{ editIndex + 1 }}. {{ initialTODOArray[editIndex].title }}</div>
       </template>
       <template v-slot:body>
         <div
-          v-for="(task, taskIndex) in store.TODOArray[editIndex].tasks"
+          v-for="(task, taskIndex) in initialTODOArray[editIndex].tasks"
           :key="task.value"
           class="tasks"
         >
@@ -182,22 +271,22 @@ const saveAndExit = (changesForTODOArray) => {
             </div>
             <div v-if="isEditMode && taskIndex == editedCurrentTask" class="editMode">
               <input v-model="changedTaskText" />
-              <button @click="saveEditedTask">Save</button>
-              <button @click="cancelChangesForTask">Cancel</button>
+              <v-button @onClick="saveEditedTask">Save</v-button>
+              <v-button @onClick="cancelChangesForTask">Cancel</v-button>
             </div>
             <div v-if="taskIndex != editedCurrentTask" class="changeTaskButtons">
-              <button @click="editTaskFromTODO(taskIndex)">Edit</button>
-              <button @click="deleteTaskFromTODO(taskIndex)">Delete</button>
+              <v-button @onClick="editTaskFromTODO(taskIndex)">Edit</v-button>
+              <v-button @onClick="deleteTaskFromTODO(taskIndex)">Delete</v-button>
             </div>
           </div>
         </div>
         <div v-if="isAddNewTask">
           <input v-model="newTaskText" />
-          <button @click="saveNewTask">Save</button>
-          <button @click="cancelNewTask">Cancel</button>
+          <v-button @onClick="saveNewTask">Save</v-button>
+          <v-button @onClick="cancelNewTask">Cancel</v-button>
         </div>
         <div v-if="!isAddNewTask">
-          <button @click="isAddNewTask = !isAddNewTask">Add task</button>
+          <v-button @onClick="isAddNewTask = !isAddNewTask">Add task</v-button>
         </div>
       </template>
     </BaseModal>
@@ -212,6 +301,26 @@ const saveAndExit = (changesForTODOArray) => {
 </template>
 
 <style scoped>
+.modal-wrapper {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(1, 0, 0, 0.3);
+}
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+
+  transform: translateX(-50%);
+  transform: translateY(-50%) translateX(-50%);
+  background-color: white;
+  border-radius: 3px;
+  padding: 1rem;
+}
 .todo-list {
   margin-top: 50px;
   display: flex;
@@ -302,5 +411,41 @@ const saveAndExit = (changesForTODOArray) => {
   flex-wrap: wrap;
   /* justify-content: center;
   align-items: center; */
+}
+
+.tasks {
+  height: 30px;
+}
+
+.task-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.editMode {
+  display: flex;
+  justify-content: space-between;
+}
+
+button {
+  margin: 5px;
+  border: 2px;
+  color: white;
+  background-color: red;
+
+  cursor: pointer;
+  border-radius: 5px;
+}
+button :hover {
+  /* box-shadow: 5px 5px 20px rgba(159, 30, 30, 0.5); */
+}
+.changeTaskButtons {
+  display: none;
+}
+
+.tasks :hover .changeTaskButtons {
+  display: flex;
 }
 </style>
