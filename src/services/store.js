@@ -1,37 +1,35 @@
-import { reactive, ref } from 'vue';
+import { ref } from 'vue'
 
-export const TODOArray = ref(
-  JSON.parse(localStorage.getItem('TODOArray')) || []
-);
+export const TODOArray = ref(JSON.parse(localStorage.getItem('TODOArray')) || [])
 
 export const actions = {
   addNewTODO(newTODO) {
-    TODOArray.value.push(newTODO);
-    localStorage.setItem('TODOArray', JSON.stringify(TODOArray.value));
+    TODOArray.value.push(newTODO)
+    localStorage.setItem('TODOArray', JSON.stringify(TODOArray.value))
   },
   deleteTODO(deleteIndex) {
-    TODOArray.value.splice(deleteIndex, 1);
-    localStorage.setItem('TODOArray', JSON.stringify(TODOArray.value));
+    TODOArray.value.splice(deleteIndex, 1)
+    localStorage.setItem('TODOArray', JSON.stringify(TODOArray.value))
   },
   editTextInTask(TODOIndex, taskIndex, newText) {
-    TODOArray.value[TODOIndex].tasks[taskIndex].text = newText;
-    localStorage.setItem('TODOArray', JSON.stringify(TODOArray.value));
+    TODOArray.value[TODOIndex].tasks[taskIndex].text = newText
+    localStorage.setItem('TODOArray', JSON.stringify(TODOArray.value))
   },
   editDoneStatusInTask(TODOIndex, taskIndex, newDoneStatus) {
-    TODOArray.value[TODOIndex].tasks[taskIndex].doneStatus = newDoneStatus;
-    localStorage.setItem('TODOArray', JSON.stringify(TODOArray.value));
+    TODOArray.value[TODOIndex].tasks[taskIndex].doneStatus = newDoneStatus
+    localStorage.setItem('TODOArray', JSON.stringify(TODOArray.value))
   },
   addNewTask(TODOIndex, newTask) {
-    TODOArray.value[TODOIndex].tasks.push(newTask);
-    localStorage.setItem('TODOArray', JSON.stringify(TODOArray.value));
+    TODOArray.value[TODOIndex].tasks.push(newTask)
+    localStorage.setItem('TODOArray', JSON.stringify(TODOArray.value))
   },
   deleteTask(TODOIndex, taskIndex) {
     TODOArray.value[TODOIndex].tasks = TODOArray[TODOIndex].tasks.filter(
       (_, ind) => ind != taskIndex
-    );
-    localStorage.setItem('TODOArray', JSON.stringify(TODOArray.value));
-  },
-};
+    )
+    localStorage.setItem('TODOArray', JSON.stringify(TODOArray.value))
+  }
+}
 
 // export const store = reactive({
 //   TODOArray: JSON.parse(localStorage.getItem('TODOArray')) || [],

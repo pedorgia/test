@@ -2,15 +2,27 @@
 import { TODOArray } from '../services/store'
 import router from '../router/index'
 import { readonly } from 'vue'
-import FullCard from '../common/TODO/FullCard.vue'
+import TODOItem from '../TODOItem.vue'
+
+defineProps({
+  index: Number,
+  item: { tasks: { text: String, doneStatus: Boolean }, title: String }
+})
 
 const TODOArrayCopy = readonly(TODOArray)
 </script>
 
 <template>
   <div class="modal">
-    <FullCard :index="Number($route.params.id)" :item="TODOArrayCopy[$route.params.id]" />
-    <!-- <div class="title">
+    <TODOItem
+      :index="index"
+      :item="item"
+      @handleEditItem="openEditModal"
+      @handleDeleteItem="openDeleteModal"
+      @handleExpand="openDetails"
+    >
+    </TODOItem>
+    <div class="title">
       {{ Number($route.params.id) + 1 }}.
       {{ TODOArrayCopy[$route.params.id].title }}
     </div>
@@ -21,7 +33,7 @@ const TODOArrayCopy = readonly(TODOArray)
           {{ task.text }}
         </div>
       </div>
-    </div> -->
+    </div>
     <div>
       <v-button @onClick="router.push({ name: 'home' })">Go back to main page</v-button>
     </div>

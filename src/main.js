@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-import BaseButton from '@/components/BaseButton.vue'
+import BaseButton from '@/common/BaseButton.vue'
 const app = createApp(App)
 
 app.use(router)
