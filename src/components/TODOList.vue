@@ -1,7 +1,7 @@
 <script setup>
-import { ref, readonly } from 'vue'
+import { reactive, ref } from 'vue'
 import AddTODO from '../modals/AddTODO.vue'
-import TODOItem from '../common/TODOItem.vue'
+//import TODOItem from '../common/TODOItem.vue'
 
 import router from '../router/index'
 import DeleteTODO from '../modals/DeleteTODO.vue'
@@ -118,7 +118,7 @@ const saveAndExit = (preparedChanges) => {
     v-if="isDeleteModal"
     @deleteTODO="handleDeleteTODO"
     @exitDeleteModal="exitDeleteModal"
-    :delete-item="TODOArrayCopy[deleteIndex]"
+    :delete-item="todoList[deleteIndex]"
   />
 
   <EditTODO

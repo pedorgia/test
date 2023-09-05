@@ -1,51 +1,61 @@
-import { ref, readonly, onMounted } from 'vue'
+import { ref, readonly, onMounted, reactive } from 'vue'
 
-let TODOArray = ref([])
+const TODOArray = reactive(JSON.parse(localStorage.getItem('TODOArray')) || [])
 
 export const useLocalStorage = () => {
   const updateLocalStorage = () => {
-    localStorage.setItem('TODOArray', JSON.stringify(TODOArray.value))
+    localStorage.setItem('TODOArray', JSON.stringify(TODOArray))
   }
-  const setTODOArray = () => {
-    TODOArray.value = JSON.parse(localStorage.getItem('TODOArray')) || []
-  }
+  // const setTODOArray = () => {
+  //   let payload = TODOArray
+  //   payload = JSON.parse(localStorage.getItem('TODOArray')) || []
+  //   //TODOArray = JSON.parse(localStorage.getItem('TODOArray')) || []
+  // }
 
   const addNewTODO = (newTODO) => {
-    TODOArray.value.push(newTODO)
+    // const payload = TODOArray
+    // payload.push(newTODO)
+    TODOArray.push(newTODO)
     updateLocalStorage()
   }
   const deleteTODO = (deleteIndex) => {
-    TODOArray.value.splice(deleteIndex, 1)
+    // let payload = TODOArray
+    // payload.splice(deleteIndex, 1)
+    TODOArray.splice(deleteIndex, 1)
     updateLocalStorage()
   }
   const editTextInTask = (TODOIndex, taskIndex, newText) => {
-    TODOArray.value[TODOIndex].tasks[taskIndex].text = newText
+    const payload = TODOArray
+    payload[TODOIndex].tasks[taskIndex].text = newText
+    TODOArray[TODOIndex].tasks = [...payload[TODOIndex].tasks]
+    //TODOArray[TODOIndex].tasks[taskIndex].text = newText
     updateLocalStorage()
   }
   const editDoneStatusInTask = (TODOIndex, taskIndex, newDoneStatus) => {
-    const payload = TODOArray.value
+    const payload = TODOArray
 
     payload[TODOIndex].tasks[taskIndex].doneStatus = newDoneStatus
 
-    TODOArray.value = payload
+    TODOArray[TODOIndex].tasks = [...payload[TODOIndex].tasks]
     updateLocalStorage()
   }
   const addNewTask = (TODOIndex, newTask) => {
-    TODOArray.value[TODOIndex].tasks.push(newTask)
+    const payload = TODOArray
+    payload[TODOIndex].tasks.push(newTask)
+    TODOArray[TODOIndex].tasks = [...payload[TODOIndex].tasks]
+    //TODOArray[TODOIndex].tasks.push(newTask)
     updateLocalStorage()
   }
   const deleteTask = (TODOIndex, taskIndex) => {
-    TODOArray.value[TODOIndex].tasks = TODOArray.value[TODOIndex].tasks.filter(
-      (_, ind) => ind != taskIndex
-    )
+    TODOArray[TODOIndex].tasks = TODOArray[TODOIndex].tasks.filter((_, ind) => ind != taskIndex)
     updateLocalStorage()
   }
 
-  onMounted(() => {
-    setTODOArray()
-  })
+  // onMounted(() => {
+  //   setTODOArray()
+  // })
   return {
-    todoList: TODOArray,
+    todoList: readonly(TODOArray),
     addNewTODO,
     deleteTODO,
     editTextInTask,

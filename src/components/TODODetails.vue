@@ -1,18 +1,16 @@
 <script setup>
-  import { TODOArray } from '../services/store';
-  import router from '../router/index';
-  import { readonly } from 'vue';
-  import FullCard from '../common/TODO/FullCard.vue';
+import { useLocalStorage } from '../services/store'
+import router from '../router/index'
+import { readonly } from 'vue'
+import FullCard from '../common/TODO/FullCard.vue'
 
-  const TODOArrayCopy = readonly(TODOArray);
+//const TODOArrayCopy = readonly(TODOArray)
+const { todoList } = useLocalStorage()
 </script>
 
 <template>
   <div class="modal">
-    <FullCard
-      :index="Number($route.params.id)"
-      :item="TODOArrayCopy[$route.params.id]"
-    />
+    <FullCard :index="Number($route.params.id)" :item="todoList[$route.params.id]" />
     <!-- <div class="title">
       {{ Number($route.params.id) + 1 }}.
       {{ TODOArrayCopy[$route.params.id].title }}
@@ -43,52 +41,52 @@
 </template>
 
 <style scoped lang="scss">
-  .modal {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    display: block;
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
 
-    transform: translateX(-50%);
-    transform: translateY(-50%) translateX(-50%);
-    background-color: white;
-    border-radius: 3px;
-    padding: 1rem;
-  }
+  transform: translateX(-50%);
+  transform: translateY(-50%) translateX(-50%);
+  background-color: white;
+  border-radius: 3px;
+  padding: 1rem;
+}
 
-  .tasks {
-    height: 30px;
-  }
+.tasks {
+  height: 30px;
+}
 
-  .task-field {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 100%;
-  }
+.task-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+}
 
-  .editMode {
-    display: flex;
-    justify-content: space-between;
-  }
+.editMode {
+  display: flex;
+  justify-content: space-between;
+}
 
-  button {
-    margin: 5px;
-    border: 2px;
-    color: white;
-    background-color: red;
+button {
+  margin: 5px;
+  border: 2px;
+  color: white;
+  background-color: red;
 
-    cursor: pointer;
-    border-radius: 5px;
-  }
-  // button :hover {
-  //   //box-shadow: 5px 5px 20px rgba(159, 30, 30, 0.5);
-  // }
-  .changeTaskButtons {
-    display: none;
-  }
+  cursor: pointer;
+  border-radius: 5px;
+}
+// button :hover {
+//   //box-shadow: 5px 5px 20px rgba(159, 30, 30, 0.5);
+// }
+.changeTaskButtons {
+  display: none;
+}
 
-  .tasks :hover .changeTaskButtons {
-    display: flex;
-  }
+.tasks :hover .changeTaskButtons {
+  display: flex;
+}
 </style>
