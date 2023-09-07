@@ -19,10 +19,6 @@
 </template>
 
 <style scoped>
-  .open-details {
-    cursor: pointer;
-    height: 70%;
-  }
   .title {
     padding-top: 10px;
     width: 100%;
@@ -32,32 +28,5 @@
   }
   .tasks {
     text-align: left;
-    /* display: none; */
-  }
-  /* .tasks:nth-child(-n + 4) {
-    display: block;
-  } */
-  .todo-buttons {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    text-align: center;
-  }
-  .delete {
-    background-color: coral;
-    color: white;
-    width: 40%;
-    cursor: pointer;
-  }
-  .edit {
-    background-color: coral;
-    color: white;
-    width: 40%;
-    cursor: pointer;
-  }
-  .button-footer {
-    position: absolute;
-    bottom: 20px;
-    left: 5px;
   }
 </style>

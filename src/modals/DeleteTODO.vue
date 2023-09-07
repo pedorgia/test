@@ -1,10 +1,10 @@
 <script setup>
-import BaseModal from '../common/BaseModal.vue'
+  import BaseModal from '../common/BaseModal.vue';
 
-defineProps({
-  deleteItem: String
-})
-const emit = defineEmits(['deleteTODO', 'exitDeleteModal'])
+  defineProps({
+    deleteItem: String,
+  });
+  const emit = defineEmits(['deleteTODO', 'exitDeleteModal']);
 </script>
 
 <template>

@@ -1,18 +1,18 @@
 <script setup>
-import BaseModal from '../common/BaseModal.vue'
-import { ref } from 'vue'
-const emit = defineEmits(['addNewTODO', 'exitAddModal'])
-const TODOTaskValue = ref('')
-const TODOtasks = ref([])
-const TODOTitleValue = ref('')
+  import BaseModal from '../common/BaseModal.vue';
+  import { ref } from 'vue';
+  const emit = defineEmits(['addNewTODO', 'exitAddModal']);
+  const TODOTaskValue = ref('');
+  const TODOtasks = ref([]);
+  const TODOTitleValue = ref('');
 
-const addTask = () => {
-  TODOtasks.value.push({
-    text: TODOTaskValue.value,
-    doneStatus: false
-  })
-  TODOTaskValue.value = ''
-}
+  const addTask = () => {
+    TODOtasks.value.push({
+      text: TODOTaskValue.value,
+      doneStatus: false,
+    });
+    TODOTaskValue.value = '';
+  };
 </script>
 
 <template>
@@ -32,7 +32,9 @@ const addTask = () => {
       <div>
         Enter tasks:
         <input v-model="TODOTaskValue" />
-        <v-button @onClick="addTask" :disabled="!TODOTaskValue">Add task</v-button>
+        <v-button @onClick="addTask" :disabled="!TODOTaskValue"
+          >Add task</v-button
+        >
         <div v-if="TODOtasks.length > 0">
           <span>Tasks: </span>
           <div v-for="task in TODOtasks" :key="task.value">
