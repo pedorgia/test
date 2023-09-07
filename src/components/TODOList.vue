@@ -136,91 +136,32 @@
 </template>
 
 <style scoped>
-  .modal-wrapper {
-    width: 100vw;
-    height: 100vh;
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-color: rgba(1, 0, 0, 0.3);
-  }
-  .modal {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    display: block;
-
-    transform: translateX(-50%);
-    transform: translateY(-50%) translateX(-50%);
-    background-color: white;
-    border-radius: 3px;
-    padding: 1rem;
-  }
   .todo-list {
     margin-top: 50px;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    /* justify-content: center; */
-
+    gap: 15px 25px;
     height: 100%;
     width: 100%;
-  }
-  .open-details {
-    cursor: pointer;
-    height: 70%;
+    padding: 0 30px;
   }
   .todo {
-    height: 200px;
-    width: 150px;
-    text-align: center;
-    border: dashed;
-    border-color: blue;
-    margin-right: 30px;
-    background-color: aqua;
-    margin-bottom: 10px;
-    /* cursor: pointer; */
-    overflow: hidden;
+    width: 300px;
+    min-height: 265px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 18px;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0 4px 12px 0 gainsboro;
     position: relative;
-
-    .title {
-      padding-top: 10px;
-      width: 100%;
-      height: 20%;
-      overflow-x: hidden;
-      white-space: nowrap;
-    }
-    .tasks {
-      text-align: left;
-      display: none;
-    }
-    .tasks:nth-child(-n + 4) {
-      display: block;
-    }
-    .todo-buttons {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      text-align: center;
-    }
-    .delete {
-      background-color: coral;
-      color: white;
-      width: 40%;
-      cursor: pointer;
-    }
-    .edit {
-      background-color: coral;
-      color: white;
-      width: 40%;
-      cursor: pointer;
-    }
-    .button-footer {
-      position: absolute;
-      bottom: 20px;
-      left: 5px;
-    }
   }
+  .todo:hover {
+    background-color: gainsboro;
+  }
+
   .main-button {
     margin-top: 20px;
     display: flex;
@@ -240,30 +181,6 @@
       background-color: palevioletred;
     }
   }
-  .todo-array {
-    margin: 30px;
-    display: flex;
-    flex-wrap: wrap;
-    /* justify-content: center;
-  align-items: center; */
-  }
-
-  .tasks {
-    height: 30px;
-  }
-
-  .task-field {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 100%;
-  }
-
-  .editMode {
-    display: flex;
-    justify-content: space-between;
-  }
-
   button {
     margin: 5px;
     border: 2px;
@@ -272,15 +189,5 @@
 
     cursor: pointer;
     border-radius: 5px;
-  }
-  button :hover {
-    /* box-shadow: 5px 5px 20px rgba(159, 30, 30, 0.5); */
-  }
-  .changeTaskButtons {
-    display: none;
-  }
-
-  .tasks :hover .changeTaskButtons {
-    display: flex;
   }
 </style>

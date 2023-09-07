@@ -10,7 +10,7 @@
 
 <template>
   <div class="modal">
-    <ItemInfo :index="index" :item="item" />
+    <ItemInfo :item="item" />
     <div>
       <v-button @onClick="router.push({ name: 'home' })"
         >Go back to main page</v-button

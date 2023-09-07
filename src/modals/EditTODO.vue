@@ -149,3 +149,13 @@
     </template>
   </BaseModal>
 </template>
+
+<style lang="scss">
+  .changeTaskButtons {
+    display: none;
+  }
+
+  .tasks :hover .changeTaskButtons {
+    display: flex;
+  }
+</style>

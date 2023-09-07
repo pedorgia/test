@@ -1,13 +1,12 @@
 <script setup>
   defineProps({
-    index: Number,
     item: { tasks: { text: String, doneStatus: Boolean }, title: String },
   });
 </script>
 
 <template>
-  <div class="title">{{ index + 1 }}. {{ item.title }}</div>
-  <div v-for="task in item.tasks" :key="task.value" class="tasks">
+  <div class="title">{{ item.title }}</div>
+  <div v-for="task in item.tasks" :key="task.value" class="task">
     <input
       type="checkbox"
       id="checkbox"
@@ -20,13 +19,21 @@
 
 <style scoped>
   .title {
-    padding-top: 10px;
     width: 100%;
-    height: 20%;
     overflow-x: hidden;
     white-space: nowrap;
+    text-transform: capitalize;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 10px;
   }
-  .tasks {
-    text-align: left;
+  .task {
+    margin-bottom: 10px;
+    padding: 5px 0;
+  }
+
+  input {
+    margin-right: 8px;
   }
 </style>
