@@ -60,7 +60,7 @@ const emit = defineEmits([
   top: 50%;
   left: 50%;
   display: block;
-  width: 400px;
+  width: 500px;
   min-height: 180px;
   transform: translateX(-50%);
   transform: translateY(-50%) translateX(-50%);

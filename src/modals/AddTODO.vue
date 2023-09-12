@@ -1,18 +1,18 @@
 <script setup>
-  import BaseModal from '../common/BaseModal.vue';
-  import { ref } from 'vue';
-  const emit = defineEmits(['addNewTODO', 'exitAddModal']);
-  const TODOTaskValue = ref('');
-  const TODOtasks = ref([]);
-  const TODOTitleValue = ref('');
+import BaseModal from "../common/BaseModal.vue";
+import { ref } from "vue";
+const emit = defineEmits(["addNewTODO", "exitAddModal"]);
+const TODOTaskValue = ref("");
+const TODOtasks = ref([]);
+const TODOTitleValue = ref("");
 
-  const addTask = () => {
-    TODOtasks.value.push({
-      text: TODOTaskValue.value,
-      doneStatus: false,
-    });
-    TODOTaskValue.value = '';
-  };
+const addTask = () => {
+  TODOtasks.value.push({
+    text: TODOTaskValue.value,
+    doneStatus: false,
+  });
+  TODOTaskValue.value = "";
+};
 </script>
 
 <template>
@@ -22,16 +22,18 @@
     @handleSubmit="emit('addNewTODO', TODOTitleValue, TODOtasks)"
     @handleCancel="emit('exitAddModal', undefined)"
   >
-    <template v-slot:title>
-      <div>
-        Enter title:
+    <template v-slot:title> <div class="title">Create new TODO</div> </template>
+    <template v-slot:body>
+      <div class="title-input">
+        <div>Enter title:</div>
         <input v-model="TODOTitleValue" />
       </div>
-    </template>
-    <template v-slot:body>
-      <div>
-        Enter tasks:
-        <input v-model="TODOTaskValue" />
+      <div class="tasks-block">
+        <div class="tasks-input">
+          Enter tasks:
+          <input v-model="TODOTaskValue" />
+        </div>
+
         <v-button @onClick="addTask" :disabled="!TODOTaskValue"
           >Add task</v-button
         >
@@ -45,3 +47,16 @@
     </template>
   </BaseModal>
 </template>
+
+<style scoped lang="scss">
+.title {
+  width: 100%;
+  overflow-x: hidden;
+  white-space: nowrap;
+  text-transform: capitalize;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 10px;
+}
+</style>

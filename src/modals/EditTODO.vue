@@ -102,7 +102,6 @@ const cancelNewTask = () => {
     @handleUndo="cancelChanges"
     @handleDelete="emit('openDeleteTODOFromEdit')"
     @handleCancel="emit('cancelAndExit')"
-    class="editTODO"
   >
     <template v-slot:title>
       <div class="title">
@@ -154,10 +153,12 @@ const cancelNewTask = () => {
           </div>
         </div>
       </div>
-      <div v-show="isAddNewTask">
-        <input v-model="newTaskText" />
-        <v-button @onClick="saveNewTask">Save</v-button>
-        <v-button @onClick="cancelNewTask">Cancel</v-button>
+      <div v-show="isAddNewTask" class="new-task">
+        <input v-model="newTaskText" class="input-new-task" />
+        <div class="new-task-buttons">
+          <v-button @onClick="saveNewTask" class="save">Save</v-button>
+          <v-button @onClick="cancelNewTask" class="cancel">Cancel</v-button>
+        </div>
       </div>
       <div v-show="!isAddNewTask" class="add-new-task">
         <v-button @onClick="isAddNewTask = !isAddNewTask">+ Add task</v-button>
@@ -184,11 +185,13 @@ const cancelNewTask = () => {
     margin-right: 8px;
   }
 }
+
 .main-text :hover {
   box-shadow: 0px 0px 10px 5px gainsboro;
   border-radius: 5px;
   padding-left: 5px;
 }
+
 .main-text {
   display: flex;
   align-items: center;
@@ -197,6 +200,7 @@ const cancelNewTask = () => {
     width: 240px;
   }
 }
+
 .edit-mode {
   display: flex;
   justify-content: space-between;
@@ -210,25 +214,25 @@ const cancelNewTask = () => {
     padding-left: 5px;
   }
 }
+
 .edit-mode input :focus-visible {
   outline: none;
-}
-.editTODO {
-  width: 300px;
-  min-height: 265px;
 }
 .changeTaskButtons {
   display: none;
   justify-content: right;
 }
+
 .tasks {
   margin-bottom: 10px;
   padding: 5px 0;
   min-height: 35px;
 }
+
 .tasks :hover .changeTaskButtons {
   display: flex;
 }
+
 .task-buttons button {
   margin-left: 10px;
   min-width: 40px;
@@ -240,6 +244,7 @@ const cancelNewTask = () => {
   cursor: pointer;
   font-size: 13px;
 }
+
 .task-buttons {
   .edit {
     background-color: rgb(0, 0, 255, 0.6);
@@ -248,9 +253,11 @@ const cancelNewTask = () => {
     background-color: rgb(255, 0, 0, 0.6);
   }
 }
+
 .add-new-task {
   text-align: center;
 }
+
 .add-new-task button {
   min-width: 80px;
   min-height: 20px;
@@ -261,6 +268,42 @@ const cancelNewTask = () => {
   cursor: pointer;
   font-size: 13px;
   background-color: rgba(220, 140, 10, 0.6);
+}
+
+.new-task-buttons {
+  .save {
+    background-color: rgb(0, 0, 255, 0.6);
+  }
+  .cancel {
+    background-color: rgba(104, 100, 100, 0.6);
+  }
+}
+
+.new-task {
+  display: flex;
+  justify-content: space-between;
+  input {
+    width: 333px;
+    font-size: 16px;
+    margin-left: 20px;
+    border: none;
+    box-shadow: 0px 0px 10px 5px gainsboro;
+    border-radius: 5px;
+    padding-left: 5px;
+  }
+}
+
+.new-task-buttons button {
+  margin-left: 10px;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  padding: 3px;
+  cursor: pointer;
+  font-size: 13px;
+
+  min-width: 40px;
+  min-height: 20px;
 }
 
 .edit-task-buttons {
