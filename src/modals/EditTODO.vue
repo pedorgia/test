@@ -178,6 +178,7 @@ const cancelNewTask = () => {
   text-align: center;
   margin-bottom: 10px;
 }
+
 .task-field {
   display: flex;
   justify-content: space-between;

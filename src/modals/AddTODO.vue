@@ -59,4 +59,18 @@ const addTask = () => {
   text-align: center;
   margin-bottom: 10px;
 }
+
+.title-input {
+  display: flex;
+  input {
+    margin-left: 10px;
+  }
+}
+
+.tasks-input {
+  display: flex;
+  input {
+    margin-left: 10px;
+  }
+}
 </style>
