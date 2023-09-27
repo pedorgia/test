@@ -49,9 +49,9 @@ const openEditModal = (x) => {
   editIndex.value = x;
 };
 
-const handleAddNewTODO = (title, tasks) => {
+const handleAddNewTODO = (title, desc) => {
   isAddModal.value = false;
-  addNewTODO({ title, tasks });
+  addNewTODO({ title, desc });
 };
 
 const handleDeleteTODO = () => {
@@ -95,21 +95,21 @@ const saveAndExit = (preparedChanges) => {
 </script>
 
 <template>
-  <div class="main-button">
-    <v-button @onClick="openAddModal" class="add-item-button"
-      >Add Item</v-button
-    >
-  </div>
-
-  <div class="todo-list">
-    <div v-for="(item, index) in todoList" :key="item.tasks" class="todo">
-      <ShortCard
-        :index="index"
-        :item="item"
-        @handleEditItem="openEditModal"
-        @handleDeleteItem="openDeleteModal"
-        @handleExpand="openDetails"
-      />
+  <div class="main-page">
+    <div class="today-title">Today's todos</div>
+    <div class="todo-list">
+      <div v-for="(item, index) in todoList" :key="item.tasks" class="todo">
+        <ShortCard
+          :index="index"
+          :item="item"
+          @handleEditItem="openEditModal"
+          @handleDeleteItem="openDeleteModal"
+          @handleExpand="openDetails"
+        />
+      </div>
+    </div>
+    <div class="main-button">
+      <v-button @onClick="openAddModal" class="add-item-button">+</v-button>
     </div>
   </div>
   <AddTODO
@@ -136,6 +136,11 @@ const saveAndExit = (preparedChanges) => {
 </template>
 
 <style scoped lang="scss">
+.main-page {
+  background-color: #646fd4cf;
+  min-height: 100vh;
+  position: relative;
+}
 .todo-list {
   margin-top: 50px;
   display: flex;
@@ -144,16 +149,17 @@ const saveAndExit = (preparedChanges) => {
   gap: 15px 25px;
   height: 100%;
   width: 100%;
-  padding: 0 30px;
+  padding: 0 25px;
 }
 .todo {
-  width: 300px;
-  min-height: 265px;
+  //width: 300px;
+  width: 100%;
+  min-height: 100px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  font-size: 18px;
-  border-radius: 10px;
+  //font-size: 18px;
+  border-radius: 17px;
   background-color: white;
   box-shadow: 0 4px 12px 0 gainsboro;
   position: relative;
@@ -163,26 +169,34 @@ const saveAndExit = (preparedChanges) => {
 }
 
 .main-button {
-  margin-top: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 60px;
+  position: absolute;
+  bottom: 20px;
+  text-align: center;
+  // display: flex;
+  // align-items: center;
+  // justify-content: center;
+  //height: 60px;
+  width: 100%;
   .add-item-button {
     border: none;
-    border-radius: 10px;
-    color: white;
-    padding: 3px;
+    border-radius: 50%;
+    color: #646fd4cf;
+    font-weight: 600;
+    height: 50px;
+    width: 50px;
+    //padding: 3px;
     cursor: pointer;
-    height: 90%;
-    width: 60%;
-    font-size: 30px;
-    background-color: rgb(255, 0, 255, 0.6);
-    cursor: pointer;
+    font-size: 45px;
+    text-align: center;
+    background-color: white;
   }
-  .add-item-button:hover {
-    box-shadow: 0px 0px 10px 1px rgb(255, 0, 255, 0.6);
-  }
+}
+.today-title {
+  padding-top: 20px;
+  font-family: Jost;
+  color: white;
+  font-size: 40px;
+  text-align: center;
 }
 /* button {
   margin: 5px;

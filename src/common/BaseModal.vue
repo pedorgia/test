@@ -20,6 +20,9 @@ const emit = defineEmits([
         <slot name="title"></slot>
         <slot name="body"></slot>
         <div class="action-buttons">
+          <v-button @onClick="emit('handleCancel', undefined)" class="cancel">{{
+            cancelText
+          }}</v-button>
           <v-button @onClick="emit('handleSubmit', undefined)" class="submit">{{
             submitText
           }}</v-button>
@@ -37,9 +40,6 @@ const emit = defineEmits([
           >
             {{ deleteText }}
           </v-button>
-          <v-button @onClick="emit('handleCancel', undefined)" class="cancel">{{
-            cancelText
-          }}</v-button>
         </div>
       </div>
     </div>
@@ -60,41 +60,47 @@ const emit = defineEmits([
   top: 50%;
   left: 50%;
   display: block;
-  width: 500px;
-  min-height: 180px;
+  width: 80%;
+  min-height: 100px;
   transform: translateX(-50%);
   transform: translateY(-50%) translateX(-50%);
   background-color: white;
-  border-radius: 3px;
+  border-radius: 17.7px;
   padding: 1rem;
 }
 
 .action-buttons {
   display: flex;
-  justify-content: space-between;
+  // justify-content: space-between;
+  justify-content: end;
   margin-top: 20px;
 
-  .submit {
-    background-color: rgb(0, 0, 255, 0.6);
-  }
-  .delete {
-    background-color: rgb(255, 0, 0, 0.6);
-  }
-  .cancel {
-    background-color: rgba(104, 100, 100, 0.6);
-  }
-  .undo {
-    background-color: rgba(13, 71, 16, 0.6);
-  }
+  // .submit {
+  //   background-color: rgb(0, 0, 255, 0.6);
+  // }
+  // .delete {
+  //   background-color: rgb(255, 0, 0, 0.6);
+  // }
+  // .cancel {
+  //   background-color: rgba(104, 100, 100, 0.6);
+  // }
+  // .undo {
+  //   background-color: rgba(13, 71, 16, 0.6);
+  // }
 }
 .action-buttons button {
+  font-family: Roboto;
+  color: #242f9b;
   border: none;
   border-radius: 10px;
-  color: white;
-  padding: 3px;
+  //color: white;
+  padding: 3px 0px 3px 0px;
+  margin-left: 10px;
   cursor: pointer;
-  font-size: 13px;
-  min-width: 55px;
+  font-size: 16px;
+  font-weight: 400;
+  min-width: 30px;
   min-height: 25px;
+  background-color: white;
 }
 </style>

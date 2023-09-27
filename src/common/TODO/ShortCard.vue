@@ -1,5 +1,7 @@
 <script setup>
 import ItemInfo from "./ItemInfo.vue";
+import { ref } from "vue";
+import { vOnClickOutside } from "@vueuse/components";
 
 const props = defineProps({
   index: Number,
@@ -13,52 +15,102 @@ const emit = defineEmits([
 ]);
 
 const itemCopy = JSON.parse(JSON.stringify(props.item));
+const isActionButtons = ref(false);
 itemCopy.tasks = itemCopy.tasks?.slice(0, 3);
+
+const clickOnDots = (event) => {
+  event.stopPropagation();
+  if (!isActionButtons.value) {
+    isActionButtons.value = true;
+  }
+  //isActionButtons.value = !isActionButtons.value;
+  console.log(isActionButtons.value);
+};
+const deleteTODO = (event) => {
+  event.stopPropagation();
+  isActionButtons.value = false;
+  emit("handleDeleteItem", props.index);
+};
+const editTODO = (event) => {
+  event.stopPropagation();
+  isActionButtons.value = false;
+  emit("handleEditItem", props.index);
+};
+
+const closeDots = () => {
+  if (isActionButtons) {
+    isActionButtons.value = false;
+  }
+};
 </script>
 
 <template>
   <div @click="emit('handleExpand', index)" class="open-details">
-    <ItemInfo :item="itemCopy" />
-    <div v-show="item?.tasks?.length > 3" style="margin-bottom: 20px">...</div>
-  </div>
-  <div class="button-footer">
-    <v-button class="edit" @onClick="emit('handleEditItem', index)"
-      >Edit me</v-button
-    >
-    <v-button class="delete" @onClick="emit('handleDeleteItem', index)"
-      >Delete me</v-button
-    >
+    <div class="circle"></div>
+    <div class="item-info"><ItemInfo :item="itemCopy" /></div>
+    <div class="dots" @click="clickOnDots">
+      <div
+        class="action-buttons-block"
+        v-if="isActionButtons"
+        v-on-click-outside="closeDots"
+      >
+        <button @click="editTODO">edit todo</button>
+        <button @click="deleteTODO">delete todo</button>
+      </div>
+    </div>
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .open-details {
   cursor: pointer;
   padding: 15px 15px 0 15px;
-}
-.button-footer .edit,
-.delete {
-  border: none;
-  color: white;
-  padding: 10px 15px;
-  cursor: pointer;
-  font-size: 17px;
-  border-radius: 10px;
-}
-
-.edit {
-  background-color: rgb(0, 0, 255, 0.6);
-}
-.delete {
-  background-color: rgb(255, 0, 0, 0.6);
-}
-
-.button-footer {
   display: flex;
   justify-content: space-between;
-  width: 100%;
+}
+
+.dots {
+  cursor: pointer;
+}
+.dots:before {
+  position: relative;
+  content: "\2807";
+  font-size: 30px;
+  color: #cccccc;
+}
+
+.action-buttons-block {
+  height: 45px;
+  width: 100px;
+  border-radius: 12px;
+  box-shadow: 0px 0px 10px 5px gainsboro;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  text-align: center;
-  padding: 0 15px 15px 15px;
+  justify-content: space-around;
+  background-color: white;
+
+  position: absolute;
+  top: 55px;
+  right: 10px;
+  z-index: 3;
+  button {
+    background-color: white;
+    width: 80%;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 15px;
+    padding: 2px;
+  }
+}
+button:hover {
+  background-color: #646fd4;
+}
+.circle {
+  border-radius: 50%;
+  height: 30px;
+  width: 30px;
+  border: 1px solid #cccccc;
 }
 </style>

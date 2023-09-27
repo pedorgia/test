@@ -172,7 +172,7 @@ const cancelNewTask = () => {
   width: 100%;
   overflow-x: hidden;
   white-space: nowrap;
-  text-transform: capitalize;
+  // text-transform: capitalize;
   font-size: 18px;
   font-weight: 600;
   text-align: center;
