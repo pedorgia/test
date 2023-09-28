@@ -27,11 +27,13 @@ defineProps({
   width: 100%;
   overflow-x: hidden;
   white-space: nowrap;
-  /* text-transform: capitalize; */
   font-size: 16px;
   font-weight: 600;
-  text-align: center;
+  text-align: left;
   margin-bottom: 10px;
+}
+.title::first-letter {
+  text-transform: capitalize;
 }
 .desc {
   width: 100%;

@@ -1,10 +1,10 @@
-import { ref, readonly, onMounted, reactive } from 'vue';
+import { ref, readonly, onMounted, reactive } from "vue";
 
-const TODOArray = reactive(JSON.parse(localStorage.getItem('TODOArray')) || []);
+const TODOArray = reactive(JSON.parse(localStorage.getItem("TODOArray")) || []);
 
 export const useLocalStorage = () => {
   const updateLocalStorage = () => {
-    localStorage.setItem('TODOArray', JSON.stringify(TODOArray));
+    localStorage.setItem("TODOArray", JSON.stringify(TODOArray));
   };
   // const setTODOArray = () => {
   //   let payload = TODOArray
@@ -42,6 +42,10 @@ export const useLocalStorage = () => {
     );
     updateLocalStorage();
   };
+  const changeTODOStatus = (TODOIndex) => {
+    TODOArray[TODOIndex].isDone = !TODOArray[TODOIndex].isDone;
+    updateLocalStorage();
+  };
 
   // onMounted(() => {
   //   setTODOArray()
@@ -50,6 +54,7 @@ export const useLocalStorage = () => {
     todoList: readonly(TODOArray),
     addNewTODO,
     deleteTODO,
+    changeTODOStatus,
     editTextInTask,
     editDoneStatusInTask,
     addNewTask,

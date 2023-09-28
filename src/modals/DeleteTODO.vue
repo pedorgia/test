@@ -1,10 +1,10 @@
 <script setup>
-  import BaseModal from '../common/BaseModal.vue';
+import BaseModal from "../common/BaseModal.vue";
 
-  defineProps({
-    deleteItem: String,
-  });
-  const emit = defineEmits(['deleteTODO', 'exitDeleteModal']);
+defineProps({
+  deleteItem: String,
+});
+const emit = defineEmits(["deleteTODO", "exitDeleteModal"]);
 </script>
 
 <template>
@@ -17,9 +17,23 @@
     <template v-slot:body>
       <div>
         <div>
-          <div class="question">Really delete {{ deleteItem.title }}?</div>
+          <div class="question">
+            Really delete
+            <p>"{{ deleteItem.title }}"</p>
+            ?
+          </div>
         </div>
       </div>
     </template>
   </BaseModal>
 </template>
+
+<style lang="scss">
+.question {
+  display: flex;
+}
+.question p {
+  font-weight: 600;
+  padding-left: 5px;
+}
+</style>

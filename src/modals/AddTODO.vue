@@ -20,6 +20,7 @@ const TitleValue = ref("");
   <BaseModal
     submit-text="Ok"
     cancel-text="Cancel"
+    :title-value="TitleValue"
     @handleSubmit="emit('addNewTODO', TitleValue, DescValue)"
     @handleCancel="emit('exitAddModal', undefined)"
   >

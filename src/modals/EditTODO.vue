@@ -178,6 +178,9 @@ const cancelNewTask = () => {
   text-align: center;
   margin-bottom: 10px;
 }
+.title::first-letter {
+  text-transform: capitalize;
+}
 .task-field {
   display: flex;
   justify-content: space-between;

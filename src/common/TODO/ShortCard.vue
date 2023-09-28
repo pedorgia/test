@@ -5,14 +5,15 @@ import { vOnClickOutside } from "@vueuse/components";
 
 const props = defineProps({
   index: Number,
-  item: { tasks: { text: String, doneStatus: Boolean }, title: String },
+  item: {
+    tasks: { text: String, doneStatus: Boolean },
+    title: String,
+    desc: String,
+    isDone: Boolean,
+  },
 });
 
-const emit = defineEmits([
-  "handleEditItem",
-  "handleDeleteItem",
-  "handleExpand",
-]);
+const emit = defineEmits(["handleEditItem", "handleDeleteItem"]);
 
 const itemCopy = JSON.parse(JSON.stringify(props.item));
 const isActionButtons = ref(false);
@@ -23,7 +24,6 @@ const clickOnDots = (event) => {
   if (!isActionButtons.value) {
     isActionButtons.value = true;
   }
-  //isActionButtons.value = !isActionButtons.value;
   console.log(isActionButtons.value);
 };
 const deleteTODO = (event) => {
@@ -37,16 +37,28 @@ const editTODO = (event) => {
   emit("handleEditItem", props.index);
 };
 
-const closeDots = () => {
+const closeDots = (event) => {
+  event.stopPropagation();
   if (isActionButtons) {
     isActionButtons.value = false;
   }
 };
+
+const clickOnCheckbox = (event) => {
+  event.stopPropagation();
+  emit("handleChangeStatus", props.index);
+};
 </script>
 
 <template>
-  <div @click="emit('handleExpand', index)" class="open-details">
-    <div class="circle"></div>
+  <div class="short-card-block">
+    <div class="circle" @click="clickOnCheckbox">
+      <img
+        src="../../img/Vector.png"
+        class="checkbox-image"
+        v-if="props.item.isDone"
+      />
+    </div>
     <div class="item-info"><ItemInfo :item="itemCopy" /></div>
     <div class="dots" @click="clickOnDots">
       <div
@@ -62,8 +74,7 @@ const closeDots = () => {
 </template>
 
 <style scoped lang="scss">
-.open-details {
-  cursor: pointer;
+.short-card-block {
   padding: 15px 15px 0 15px;
   display: flex;
   justify-content: space-between;
@@ -83,7 +94,7 @@ const closeDots = () => {
   height: 45px;
   width: 100px;
   border-radius: 12px;
-  box-shadow: 0px 0px 10px 5px gainsboro;
+  box-shadow: 0px 0px 20px 2px gainsboro;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -112,5 +123,16 @@ button:hover {
   height: 30px;
   width: 30px;
   border: 1px solid #cccccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.checkbox-image {
+  text-align: center;
+}
+
+.item-info {
+  width: 80%;
+  margin-left: 10px;
 }
 </style>

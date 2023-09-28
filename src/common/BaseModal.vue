@@ -4,6 +4,7 @@ defineProps({
   cancelText: String,
   undoText: String,
   deleteText: String,
+  titleValue: String,
 });
 const emit = defineEmits([
   "handleSubmit",
@@ -23,9 +24,12 @@ const emit = defineEmits([
           <v-button @onClick="emit('handleCancel', undefined)" class="cancel">{{
             cancelText
           }}</v-button>
-          <v-button @onClick="emit('handleSubmit', undefined)" class="submit">{{
-            submitText
-          }}</v-button>
+          <v-button
+            @onClick="emit('handleSubmit', undefined)"
+            class="submit"
+            :disabled="!props.titleValue"
+            >{{ submitText }}</v-button
+          >
           <v-button
             v-if="undoText"
             @onClick="emit('handleUndo', undefined)"

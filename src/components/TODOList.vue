@@ -17,6 +17,7 @@ const {
   todoList,
   addNewTODO,
   deleteTODO,
+  changeTODOStatus,
   editTextInTask,
   editDoneStatusInTask,
   addNewTask,
@@ -51,7 +52,7 @@ const openEditModal = (x) => {
 
 const handleAddNewTODO = (title, desc) => {
   isAddModal.value = false;
-  addNewTODO({ title, desc });
+  addNewTODO({ title, desc, isDone: false });
 };
 
 const handleDeleteTODO = () => {
@@ -92,19 +93,28 @@ const saveAndExit = (preparedChanges) => {
   isEditModal.value = false;
   editIndex.value = -1;
 };
+
+const changeTODODoneStatus = (index) => {
+  changeTODOStatus(index);
+};
 </script>
 
 <template>
   <div class="main-page">
     <div class="today-title">Today's todos</div>
     <div class="todo-list">
-      <div v-for="(item, index) in todoList" :key="item.tasks" class="todo">
+      <div
+        v-for="(item, index) in todoList"
+        :key="item.tasks"
+        class="todo"
+        @click="openDetails(index)"
+      >
         <ShortCard
           :index="index"
           :item="item"
           @handleEditItem="openEditModal"
           @handleDeleteItem="openDeleteModal"
-          @handleExpand="openDetails"
+          @handleChangeStatus="changeTODODoneStatus"
         />
       </div>
     </div>
@@ -137,7 +147,8 @@ const saveAndExit = (preparedChanges) => {
 
 <style scoped lang="scss">
 .main-page {
-  background-color: #646fd4cf;
+  //background-color: #646fd4cf;
+  background-image: linear-gradient(#646fd4cf, white);
   min-height: 100vh;
   position: relative;
 }
@@ -163,10 +174,11 @@ const saveAndExit = (preparedChanges) => {
   background-color: white;
   box-shadow: 0 4px 12px 0 gainsboro;
   position: relative;
+  cursor: pointer;
 }
-.todo:hover {
-  background-color: gainsboro;
-}
+// .todo:hover {
+//   background-color: gainsboro;
+// }
 
 .main-button {
   position: absolute;
@@ -180,7 +192,7 @@ const saveAndExit = (preparedChanges) => {
   .add-item-button {
     border: none;
     border-radius: 50%;
-    color: #646fd4cf;
+    color: white;
     font-weight: 600;
     height: 50px;
     width: 50px;
@@ -188,7 +200,7 @@ const saveAndExit = (preparedChanges) => {
     cursor: pointer;
     font-size: 45px;
     text-align: center;
-    background-color: white;
+    background-color: #646fd4cf;
   }
 }
 .today-title {
