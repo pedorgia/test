@@ -13,7 +13,11 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["handleEditItem", "handleDeleteItem"]);
+const emit = defineEmits([
+  "handleEditItem",
+  "handleDeleteItem",
+  "handleChangeStatus",
+]);
 
 const itemCopy = JSON.parse(JSON.stringify(props.item));
 const isActionButtons = ref(false);

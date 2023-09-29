@@ -20,14 +20,21 @@ const emit = defineEmits([
       <div class="modal">
         <slot name="title"></slot>
         <slot name="body"></slot>
-        <div class="action-buttons">
-          <v-button @onClick="emit('handleCancel', undefined)" class="cancel">{{
-            cancelText
-          }}</v-button>
+        <div
+          class="action-buttons"
+          v-if="cancelText || submitText || undoText || deleteText"
+        >
           <v-button
+            v-if="cancelText"
+            @onClick="emit('handleCancel', undefined)"
+            class="cancel"
+            >{{ cancelText }}</v-button
+          >
+          <v-button
+            v-if="submitText"
             @onClick="emit('handleSubmit', undefined)"
             class="submit"
-            :disabled="!props.titleValue"
+            :disabled="!$props.titleValue"
             >{{ submitText }}</v-button
           >
           <v-button

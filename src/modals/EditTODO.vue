@@ -94,10 +94,6 @@ const cancelNewTask = () => {
 
 <template>
   <BaseModal
-    submit-text="Save"
-    undo-text="Undo"
-    delete-text="Delete"
-    cancel-text="Cancel"
     @handleSubmit="emit('saveAndExit', preparedChanges)"
     @handleUndo="cancelChanges"
     @handleDelete="emit('openDeleteTODOFromEdit')"
@@ -109,6 +105,7 @@ const cancelNewTask = () => {
       </div>
     </template>
     <template v-slot:body>
+      <div>{{ initialTODO.desc }}</div>
       <div
         v-for="(task, taskIndex) in initialTODO.tasks"
         :key="task.value"
@@ -161,7 +158,7 @@ const cancelNewTask = () => {
         </div>
       </div>
       <div v-show="!isAddNewTask" class="add-new-task">
-        <v-button @onClick="isAddNewTask = !isAddNewTask">+ Add task</v-button>
+        <v-button @onClick="isAddNewTask = !isAddNewTask">+</v-button>
       </div>
     </template>
   </BaseModal>
@@ -259,18 +256,21 @@ const cancelNewTask = () => {
 
 .add-new-task {
   text-align: center;
+  margin-top: 40px;
 }
 
 .add-new-task button {
-  min-width: 80px;
-  min-height: 20px;
+  width: 30px;
+  height: 30px;
   border: none;
-  border-radius: 10px;
+  border-radius: 50%;
   color: white;
-  padding: 3px;
+  //padding: 3px;
   cursor: pointer;
-  font-size: 13px;
-  background-color: rgba(220, 140, 10, 0.6);
+  font-size: 27px;
+  font-weight: 600;
+  //background-color: rgba(220, 140, 10, 0.6);
+  background-color: #646fd4cf;
 }
 
 .new-task-buttons {
